@@ -1,0 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --ink: #151b26;
+    --ivory: #f5f3ed;
+    --signal: #ff6b35;
+  }
+
+  * {
+    @apply border-line;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-ivory font-sans text-ink antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  ::selection {
+    background: rgba(255, 107, 53, 0.28);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+    letter-spacing: -0.025em;
+  }
+
+  :focus-visible {
+    outline: 2px solid #ff6b35;
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .label-micro {
+    @apply text-[10.5px] font-semibold uppercase tracking-micro text-muted;
+  }
+
+  .panel {
+    @apply rounded-xl border border-line bg-paper;
+  }
+
+  .hairline {
+    @apply border-t border-line;
+  }
+
+  .app-grid {
+    background-image:
+      linear-gradient(to right, rgba(21, 27, 38, 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(21, 27, 38, 0.045) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  .noise-edge {
+    background-image: radial-gradient(rgba(21, 27, 38, 0.16) 0.5px, transparent 0.5px);
+    background-size: 6px 6px;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #cfc9ba transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #d6d1c4;
+    border-radius: 999px;
+  }
+
+  .input-base {
+    @apply w-full rounded-lg border border-line bg-white px-3.5 py-2.5 text-sm text-ink transition-colors placeholder:text-muted/60 focus:border-ink/40 focus:outline-none focus:ring-2 focus:ring-signal/25;
+  }
+
+  .table-row-hover {
+    @apply transition-colors hover:bg-ash/50;
+  }
+}
+
+@layer utilities {
+  .animate-voice-bar {
+    animation-name: voice-bar;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+
+  .animate-voice-ring {
+    animation: voice-ring 1.6s ease-out infinite;
+  }
+
+  @keyframes voice-bar {
+    0%,
+    100% {
+      transform: scaleY(0.45);
+      opacity: 0.55;
+    }
+    50% {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes voice-ring {
+    0% {
+      transform: scale(1);
+      opacity: 0.7;
+    }
+    100% {
+      transform: scale(1.55);
+      opacity: 0;
+    }
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  .mask-fade-b {
+    mask-image: linear-gradient(to bottom, black 82%, transparent 100%);
+  }
+}
