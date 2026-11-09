@@ -11,6 +11,7 @@
     "test:voice": "node scripts/voice-check.mjs"
   },
   "dependencies": {
+    "@qoder-ai/qoder-agent-sdk": "^1.0.59",
     "framer-motion": "^12.23.12",
     "lucide-react": "^0.468.0",
     "mongodb": "^7.8.0",
