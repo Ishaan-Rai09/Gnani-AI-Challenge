@@ -7,10 +7,18 @@ import { sttLanguageCode } from "@/lib/voice/catalog";
 export type PushToTalkState = "idle" | "recording" | "transcribing" | "error";
 
 const MAX_RECORDING_MS = 25_000;
+const MIN_RECORDING_MS = 1_200;
+const SILENCE_THRESHOLD = 0.075;
+const SILENCE_MS = 1_100;
+const NO_SPEECH_STOP_MS = 8_000;
 
 /**
- * Records a short spoken reply, converts it to 16 kHz WAV and sends it to the
+ * Records a spoken reply, converts it to 16 kHz WAV and sends it to the
  * server-side Gnani STT route. The API key never reaches the browser.
+ *
+ * Voice-activity detection ends the clip automatically ~1s after you stop
+ * speaking, so replies reach the call in seconds instead of waiting for the
+ * full recording window.
  */
 export function usePushToTalk({
   language,
@@ -34,6 +42,9 @@ export function usePushToTalk({
   const timerRef = useRef<number | null>(null);
   const startingRef = useRef(false);
   const startedRef = useRef(0);
+  const sawSpeechRef = useRef(false);
+  const lastVoiceRef = useRef(0);
+  const silentAbortRef = useRef(false);
   const onTranscriptRef = useRef(onTranscript);
   onTranscriptRef.current = onTranscript;
 
@@ -89,6 +100,9 @@ export function usePushToTalk({
       const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
       recorderRef.current = recorder;
       chunksRef.current = [];
+      sawSpeechRef.current = false;
+      silentAbortRef.current = false;
+      lastVoiceRef.current = Date.now();
 
       recorder.ondataavailable = (event) => {
         if (event.data.size > 0) chunksRef.current.push(event.data);
@@ -97,10 +111,12 @@ export function usePushToTalk({
       recorder.onstop = async () => {
         const chunks = chunksRef.current;
         const type = recorder.mimeType || mimeType || "audio/webm";
+        const wasSilentAbort = silentAbortRef.current;
         cleanup();
-        if (chunks.length === 0) {
-          setState("error");
-          setError("No audio was captured. Try again.");
+        if (chunks.length === 0 || wasSilentAbort) {
+          // Nothing usable was said — re-arm quietly instead of erroring.
+          setState("idle");
+          setError(null);
           return;
         }
 
@@ -159,8 +175,29 @@ export function usePushToTalk({
           const value = (samples[index] - 128) / 128;
           sum += value * value;
         }
-        setLevel(Math.min(1, Math.sqrt(sum / samples.length) * 4));
-        setElapsedMs(Date.now() - startedRef.current);
+        const current = Math.min(1, Math.sqrt(sum / samples.length) * 4);
+        setLevel(current);
+        const now = Date.now();
+        setElapsedMs(now - startedRef.current);
+
+        // Voice-activity detection: stop shortly after the speaker pauses so
+        // the reply is transcribed immediately instead of waiting out the
+        // full window.
+        const active = recorderRef.current;
+        if (!active || active.state === "inactive") return;
+        const elapsed = now - startedRef.current;
+        if (current > SILENCE_THRESHOLD) {
+          sawSpeechRef.current = true;
+          lastVoiceRef.current = now;
+        }
+        if (elapsed < MIN_RECORDING_MS) return;
+        if (sawSpeechRef.current && now - lastVoiceRef.current > SILENCE_MS) {
+          active.stop();
+          setState("transcribing");
+        } else if (!sawSpeechRef.current && elapsed > NO_SPEECH_STOP_MS) {
+          silentAbortRef.current = true;
+          active.stop();
+        }
       }, 90);
 
       timerRef.current = window.setTimeout(() => {

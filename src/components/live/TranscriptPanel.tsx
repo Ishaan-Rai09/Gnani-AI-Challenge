@@ -200,7 +200,7 @@ export function TranscriptPanel({
   const transcribing = ptt.state === "transcribing";
 
   let statusLabel = "Assistant is listening";
-  if (recording) statusLabel = handsFree ? "Mic is live — just speak" : "Listening — speak now";
+  if (recording) statusLabel = handsFree ? "Mic is live — just speak, it auto-sends" : "Listening — pause to send";
   else if (transcribing) statusLabel = "Transcribing your reply…";
   else if (voice.speaking && speakingEntry?.speaker === "caller") statusLabel = "Caller is speaking";
   else if (voice.speaking) statusLabel = "CallShield AI is speaking";
@@ -410,8 +410,8 @@ export function TranscriptPanel({
                 <p className="mt-0.5 text-[9px] leading-relaxed text-muted">
                   {voice.configured
                     ? handsFree
-                      ? "Hands-free: the mic re-arms after every reply, and the caller responds to what you say. Tap the mic to send instantly."
-                      : "Your clip is transcribed by Gnani Prisma and added to the call. Up to 25 seconds."
+                      ? "Hands-free: just talk — your reply is sent the moment you pause, and the caller answers right back."
+                      : "Speak and pause — the clip is sent automatically. Tap the mic to send even earlier."
                     : "Add the key to .env.local and restart the server. You can type below for now."}
                 </p>
               </div>
