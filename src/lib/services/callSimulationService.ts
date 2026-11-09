@@ -27,6 +27,14 @@ const CALLER_FALLBACKS = [
   "Why are you doubting me? I am calling from the official department only.",
 ];
 
+/** Hinglish rebuttals used when the session was created with Hinglish flavour. */
+const CALLER_FALLBACKS_HINGLISH = [
+  "Arre nahi nahi, suniye — bahut urgent hai, abhi confirmation chahiye!",
+  "Main guarantee deta hoon, yeh bilkul genuine hai. Pehle aap apni details verify kara dijiye?",
+  "Theek hai theek hai. Par yaad rakhiye, kuch galat hua toh zimmedari aapki hogi, meri nahi.",
+  "Aap mujh par shak kyun kar rahe ho? Main official department se hi bol raha hoon!",
+];
+
 const ACTION_DETAIL: Record<CallAction, string> = {
   blocked: "The number was added to the blocklist and the interaction saved.",
   allowed: "The caller was marked as trusted and saved in call history.",
@@ -40,7 +48,7 @@ function baseEvent(label: string, detail: string, tone: TimelineEvent["tone"] = 
 
 /** Pure orchestration for the simulated calling environment. */
 export const callSimulationService = {
-  createSession(scenario: Scenario): LiveSession {
+  createSession(scenario: Scenario, settings?: AssistantSettings): LiveSession {
     return {
       id: uid("call"),
       scenarioId: scenario.id,
@@ -49,6 +57,7 @@ export const callSimulationService = {
       elapsedSec: 0,
       answeredByAI: false,
       userTookOver: false,
+      hinglish: settings?.hinglish === true,
       transcript: [],
       scriptCursor: 0,
       revealedIndicators: [],
@@ -274,7 +283,8 @@ export const callSimulationService = {
       if (step.intentKey) next.intentKey = step.intentKey;
       if (typeof step.identityConfidence === "number") next.identityConfidence = step.identityConfidence;
     } else {
-      const fallback = CALLER_FALLBACKS[session.transcript.length % CALLER_FALLBACKS.length];
+      const pool = session.hinglish ? CALLER_FALLBACKS_HINGLISH : CALLER_FALLBACKS;
+      const fallback = pool[session.transcript.length % pool.length];
       next.transcript = [
         ...next.transcript,
         conversationService.lineFromStep(fallback, "caller", at + 2),

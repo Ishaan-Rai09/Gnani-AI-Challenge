@@ -473,6 +473,7 @@ export const DEFAULT_ASSISTANT: AssistantSettings = {
   language: "English (India)",
   voiceEnabled: true,
   voice: "Kaveri",
+  hinglish: true,
   questions: {
     name: true,
     organisation: true,

@@ -16,6 +16,7 @@ export async function GET() {
       configured: config.configured,
       mode: config.configured ? "ready" : "demo",
       voice: config.configured,
+      voiceClone: config.cloneConfigured,
       services: {
         speechToText: config.configured ? "configured" : "demo",
         textToSpeech: config.configured ? "configured" : "demo",

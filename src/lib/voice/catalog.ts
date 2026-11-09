@@ -18,11 +18,11 @@ export const ASSISTANT_VOICES: VoiceOption[] = [
   { id: "Shlok", label: "Shlok", persona: "Warm, conversational", language: "en-IN" },
   { id: "Girish", label: "Girish", persona: "Expressive, energetic", language: "en-IN" },
   { id: "Devika", label: "Devika", persona: "Authoritative", language: "en-IN" },
+  { id: "clone", label: "Your Voice", persona: "Cloned from your reference audio via Gnani VC", language: "auto" },
 ];
 
 /** Caller voices are assigned per scenario so two callers never sound alike. */
 const CALLER_VOICES = ["Pranav", "Shlok", "Girish", "Devika", "Trupti", "Kaveri"];
-
 export function callerVoiceFor(scenarioId: string): string {
   let hash = 0;
   for (let index = 0; index < scenarioId.length; index += 1) {

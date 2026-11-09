@@ -71,6 +71,11 @@ export function usePushToTalk({
   const stop = useCallback(() => {
     const recorder = recorderRef.current;
     if (!recorder || recorder.state === "inactive") return;
+    // A near-instant tap produces a clip too short to transcribe — treat it
+    // like silence instead of spending an STT call on it.
+    if (Date.now() - startedRef.current < 800) {
+      silentAbortRef.current = true;
+    }
     recorder.stop();
     setState("transcribing");
     if (timerRef.current !== null) window.clearTimeout(timerRef.current);
@@ -123,14 +128,22 @@ export function usePushToTalk({
         setState("transcribing");
         try {
           const wav = await recordingToWav(new Blob(chunks, { type }));
-          const form = new FormData();
-          form.append("audio", wav, "reply.wav");
-          form.append("language", sttLanguageCode(language));
+          const transcribe = async () => {
+            const form = new FormData();
+            form.append("audio", wav, "reply.wav");
+            form.append("language", sttLanguageCode(language));
+            const response = await fetch("/api/voice/stt", { method: "POST", body: form });
+            const data = (await response.json().catch(() => null)) as
+              | { transcript?: string; message?: string }
+              | null;
+            return { response, data };
+          };
 
-          const response = await fetch("/api/voice/stt", { method: "POST", body: form });
-          const data = (await response.json().catch(() => null)) as
-            | { transcript?: string; message?: string }
-            | null;
+          // One silent retry — STT occasionally misses on a clear clip.
+          let { response, data } = await transcribe();
+          if (response.ok && !(data?.transcript ?? "").trim()) {
+            ({ response, data } = await transcribe());
+          }
 
           if (!response.ok) {
             setError(data?.message ?? "Speech recognition is unavailable right now.");
@@ -140,7 +153,9 @@ export function usePushToTalk({
 
           const text = (data?.transcript ?? "").trim();
           if (!text) {
-            setError("I didn't catch that. Tap the mic and try again.");
+            setError(
+              "Gnani heard no clear words in that clip. Speak a little louder and closer to the mic — and if you're speaking Hindi, switch the assistant language to Hindi in settings."
+            );
             setState("error");
             return;
           }

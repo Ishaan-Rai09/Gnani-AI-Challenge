@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { ShieldCheck, Smartphone } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 export default function SignInPage() {
@@ -72,13 +71,6 @@ export default function SignInPage() {
             </svg>
             {busy ? "Redirecting…" : "Continue with Google"}
           </Button>
-          <Link
-            href="/app"
-            className="flex w-full items-center justify-center gap-1.5 rounded-full border border-line bg-paper px-4 py-2 text-[11.5px] font-medium text-ink/70 transition-colors hover:bg-ink/[0.04]"
-          >
-            <Smartphone className="h-3.5 w-3.5" />
-            Continue in demo mode
-          </Link>
         </div>
 
         <p className="mt-5 border-t border-line pt-4 text-[9px] leading-relaxed text-muted">

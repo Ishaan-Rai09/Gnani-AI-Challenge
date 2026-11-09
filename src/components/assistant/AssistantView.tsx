@@ -6,6 +6,7 @@ import {
   Check,
   CircleHelp,
   Globe2,
+  Languages,
   ListChecks,
   Loader2,
   MessageSquareText,
@@ -314,15 +315,40 @@ export function AssistantView() {
             </div>
 
             <p className="mt-2 text-[9.5px] leading-relaxed text-muted">
-              {voice.configured
-                ? `Gnani ${voice.ttsModel ?? "Timbre"} for speech, ${voice.sttModel ?? "Prisma"} for recognition. Caller voices are assigned per scenario.`
-                : "Add GNANI_API_KEY to .env.local to enable spoken calls. Until then, calls run in captions-only mode."}
+              {voice.configured && assistant.voice === "clone" && !voice.voiceClone
+                ? "The cloned voice needs a reference recording on the server: add GNANI_CLONE_AUDIO (path to a 5-30s clip of your voice) and restart. Until then calls fall back to captions."
+                : voice.configured
+                  ? `Gnani ${voice.ttsModel ?? "Timbre"} for speech, ${voice.sttModel ?? "Prisma"} for recognition.${voice.voiceClone ? " Your cloned voice is ready." : ""} Caller voices are assigned per scenario.`
+                  : "Add GNANI_API_KEY to .env.local to enable spoken calls. Until then, calls run in captions-only mode."}
             </p>
             {voice.error && (
               <p className="mt-2 rounded-lg border border-signal/30 bg-signal/[0.07] px-3 py-2 text-[10px] leading-relaxed text-ink/65">
                 {voice.error}
               </p>
             )}
+          </section>
+
+          <section className="rounded-xl border border-line bg-paper p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex gap-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line bg-white">
+                  <Languages className="h-4 w-4 text-ink/60" />
+                </span>
+                <div>
+                  <h3 className="text-[13.5px] font-semibold">Hinglish flavour</h3>
+                  <p className="mt-0.5 max-w-[420px] text-[11px] leading-relaxed text-muted">
+                    Callers speak the natural, code-mixed way real spam calls sound —
+                    &ldquo;Aapka KYC expire ho gaya hai&rdquo; — while summaries and risk reports stay
+                    in formal English.
+                  </p>
+                </div>
+              </div>
+              <Toggle
+                checked={assistant.hinglish}
+                onChange={(value) => updateAssistant({ hinglish: value })}
+                label="Hinglish flavour"
+              />
+            </div>
           </section>
 
           <section className="rounded-xl border border-line bg-paper p-5">

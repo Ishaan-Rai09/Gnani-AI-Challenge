@@ -39,7 +39,7 @@ export function Hero() {
           </div>
 
           <p className="mt-4 text-[11.5px] text-muted">
-            Free · sign in with Google, or continue in demo mode from the sign-in page.
+            Free · sign in with Google to keep your calls and blocklist on your account.
           </p>
 
           <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-line pt-5 text-[11px] text-ink/50">

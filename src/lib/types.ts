@@ -99,8 +99,10 @@ export interface AssistantSettings {
   language: string;
   /** Play caller and assistant lines aloud through Gnani TTS. */
   voiceEnabled: boolean;
-  /** Gnani Timbre voice id used for the assistant. */
+  /** Gnani Timbre voice id used for the assistant ("clone" = your cloned voice). */
   voice: string;
+  /** Mix natural Hinglish phrasing into the simulated call scripts. */
+  hinglish: boolean;
   questions: {
     name: boolean;
     organisation: boolean;
@@ -139,6 +141,8 @@ export interface LiveSession {
   elapsedSec: number;
   answeredByAI: boolean;
   userTookOver: boolean;
+  /** The session was created with Hinglish-flavoured script lines. */
+  hinglish: boolean;
   transcript: TranscriptEntry[];
   scriptCursor: number;
   revealedIndicators: IndicatorKey[];
@@ -159,6 +163,8 @@ export interface ScriptStep {
   at: number;
   speaker: Speaker;
   text: string;
+  /** Natural Hinglish variant spoken when the Hinglish flavor setting is on. */
+  hinglish?: string;
   reveals?: IndicatorKey[];
   infoRequested?: string[];
   intentKey?: IntentKey;

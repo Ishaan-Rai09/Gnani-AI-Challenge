@@ -11,13 +11,12 @@ import {
   type ReactNode,
 } from "react";
 import { useSession } from "next-auth/react";
-import { getScenario } from "@/lib/scenarios";
+import { applyHinglish, getScenario } from "@/lib/scenarios";
 import {
   buildSeedBlocklist,
   buildSeedCalls,
   buildSeedNotifications,
   DEFAULT_ASSISTANT,
-  DEFAULT_PROFILE,
 } from "@/lib/seed";
 import { callSimulationService } from "@/lib/services/callSimulationService";
 import type {
@@ -32,14 +31,13 @@ import type {
 } from "@/lib/types";
 import { uid } from "@/lib/utils";
 
-const STORAGE_KEY = "callshield.v1";
-/** Signed-in users keep device-local prefs (assistant, notifications) separately
- * so signing out never hands server data to the guest demo, and vice versa. */
+/** Device-local prefs (assistant settings, notifications, phone label) — they
+ * survive sign-out but never hold call data, which lives in MongoDB per user. */
 const ACCOUNT_PREFS_KEY = "callshield.v1.account";
 
 export type ToastTone = "success" | "risk" | "neutral";
 
-export type AccountStatus = "loading" | "google" | "guest";
+export type AccountStatus = "loading" | "google";
 
 export interface Toast {
   id: string;
@@ -56,18 +54,16 @@ export interface Account {
 }
 
 interface PersistedData {
-  calls: CallRecord[];
-  blocklist: BlockedNumber[];
-  notifications: NotificationItem[];
   assistant: AssistantSettings;
-  profile: Profile;
+  notifications: NotificationItem[];
+  phone: string;
 }
 
 interface CallShieldContextValue {
   hydrated: boolean;
-  /** "loading" while the session resolves; "google" when signed in; "guest" otherwise. */
+  /** "loading" while the session resolves; "google" once signed in. */
   accountStatus: AccountStatus;
-  /** The signed-in Google account, or null in guest/demo mode. */
+  /** The signed-in Google account, or null while loading. */
   account: Account | null;
   calls: CallRecord[];
   blocklist: BlockedNumber[];
@@ -121,25 +117,14 @@ export function CallShieldProvider({ children }: { children: ReactNode }) {
   }, [sessionData, sessionStatus]);
 
   const accountStatus: AccountStatus =
-    sessionStatus === "loading" ? "loading" : account ? "google" : "guest";
-
-  const [initial] = useState(() => {
-    const calls = buildSeedCalls();
-    return {
-      calls,
-      blocklist: buildSeedBlocklist(),
-      notifications: buildSeedNotifications(calls),
-    };
-  });
+    sessionStatus === "loading" ? "loading" : "google";
 
   const [hydrated, setHydrated] = useState(false);
-  const [calls, setCalls] = useState<CallRecord[]>(initial.calls);
-  const [blocklist, setBlocklist] = useState<BlockedNumber[]>(initial.blocklist);
-  const [notifications, setNotifications] = useState<NotificationItem[]>(
-    initial.notifications
-  );
+  const [calls, setCalls] = useState<CallRecord[]>([]);
+  const [blocklist, setBlocklist] = useState<BlockedNumber[]>([]);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [assistant, setAssistant] = useState<AssistantSettings>(DEFAULT_ASSISTANT);
-  const [demoProfile, setDemoProfile] = useState<Profile>(DEFAULT_PROFILE);
+  const [phone, setPhone] = useState("");
   const [session, setSession] = useState<LiveSession | null>(null);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const notifiedSessions = useRef<Set<string>>(new Set());
@@ -151,26 +136,8 @@ export function CallShieldProvider({ children }: { children: ReactNode }) {
 
   /* ------------------------------ data source ------------------------------ */
 
-  // Guests: hydrate the original local-storage demo blob once.
-  useEffect(() => {
-    if (sessionStatus !== "unauthenticated") return;
-    try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as Partial<PersistedData>;
-        if (Array.isArray(parsed.calls)) setCalls(parsed.calls);
-        if (Array.isArray(parsed.blocklist)) setBlocklist(parsed.blocklist);
-        if (Array.isArray(parsed.notifications)) setNotifications(parsed.notifications);
-        if (parsed.assistant) setAssistant({ ...DEFAULT_ASSISTANT, ...parsed.assistant });
-        if (parsed.profile) setDemoProfile({ ...DEFAULT_PROFILE, ...parsed.profile });
-      }
-    } catch {
-      // Corrupted storage should never block the demo.
-    }
-    setHydrated(true);
-  }, [sessionStatus]);
-
-  // Signed-in users: hydrate per-user history and blocklist from the database.
+  // Hydrate per-user history and blocklist from the database, then layer the
+  // device-local assistant settings, notifications, and phone label on top.
   useEffect(() => {
     if (sessionStatus !== "authenticated" || !account) return;
     let cancelled = false;
@@ -185,28 +152,23 @@ export function CallShieldProvider({ children }: { children: ReactNode }) {
         if (cancelled) return;
         setCalls(data.calls);
         setBlocklist(data.blocklist);
-        try {
-          const raw = window.localStorage.getItem(ACCOUNT_PREFS_KEY);
-          if (raw) {
-            const prefs = JSON.parse(raw) as {
-              assistant?: AssistantSettings;
-              notifications?: NotificationItem[];
-              phone?: string;
-            };
-            if (prefs.assistant) setAssistant({ ...DEFAULT_ASSISTANT, ...prefs.assistant });
-            if (Array.isArray(prefs.notifications)) setNotifications(prefs.notifications);
-            if (typeof prefs.phone === "string") {
-              setDemoProfile((prev) => ({ ...prev, phone: prefs.phone as string }));
-            }
-          }
-        } catch {
-          // Ignore malformed prefs.
-        }
       } catch {
         if (!cancelled) {
           setCalls([]);
           setBlocklist([]);
         }
+      }
+      if (cancelled) return;
+      try {
+        const raw = window.localStorage.getItem(ACCOUNT_PREFS_KEY);
+        if (raw) {
+          const prefs = JSON.parse(raw) as Partial<PersistedData>;
+          if (prefs.assistant) setAssistant({ ...DEFAULT_ASSISTANT, ...prefs.assistant });
+          if (Array.isArray(prefs.notifications)) setNotifications(prefs.notifications);
+          if (typeof prefs.phone === "string") setPhone(prefs.phone);
+        }
+      } catch {
+        // Ignore malformed prefs.
       }
       if (!cancelled) setHydrated(true);
     })();
@@ -215,24 +177,18 @@ export function CallShieldProvider({ children }: { children: ReactNode }) {
     };
   }, [sessionStatus, account]);
 
-  // Guests persist the full demo blob; signed-in users persist only their
-  // device-local assistant settings and notifications.
+  // Persist only device-local assistant settings, notifications, and phone.
   useEffect(() => {
     if (!hydrated) return;
     try {
-      if (sessionStatus === "unauthenticated") {
-        const data: PersistedData = { calls, blocklist, notifications, assistant, profile: demoProfile };
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      } else if (sessionStatus === "authenticated") {
-        window.localStorage.setItem(
-          ACCOUNT_PREFS_KEY,
-          JSON.stringify({ assistant, notifications, phone: demoProfile.phone })
-        );
-      }
+      window.localStorage.setItem(
+        ACCOUNT_PREFS_KEY,
+        JSON.stringify({ assistant, notifications, phone })
+      );
     } catch {
       // Storage may be unavailable (private mode). The session still works in memory.
     }
-  }, [hydrated, sessionStatus, calls, blocklist, notifications, assistant, demoProfile]);
+  }, [hydrated, assistant, notifications, phone]);
 
   /** Best-effort server sync for signed-in users; local state already updated. */
   const syncServer = useCallback(
@@ -246,6 +202,16 @@ export function CallShieldProvider({ children }: { children: ReactNode }) {
   );
 
   /* --------------------------------- toasts -------------------------------- */
+
+  /**
+   * The scenario behind a live session, re-flavoured from the session's own
+   * flag so Hinglish stays consistent across ticks, takeover, and finalize
+   * even if the setting changes mid-call.
+   */
+  const resolveScenario = useCallback((session: LiveSession) => {
+    const scenario = getScenario(session.scenarioId);
+    return scenario && session.hinglish ? applyHinglish(scenario) : scenario;
+  }, []);
 
   const pushToast = useCallback((toast: Omit<Toast, "id">) => {
     const id = uid("toast");
@@ -276,43 +242,33 @@ export function CallShieldProvider({ children }: { children: ReactNode }) {
 
   /* -------------------------------- profile -------------------------------- */
 
-  // Signed-in users see their real Google identity, not the demo profile.
+  // The signed-in Google identity; only the phone label stays device-local.
   const profile = useMemo<Profile>(
-    () =>
-      account
-        ? {
-            name: account.name,
-            email: account.email,
-            phone: demoProfile.phone,
-            plan: "Google account",
-            image: account.image,
-          }
-        : demoProfile,
-    [account, demoProfile]
+    () => ({
+      name: account?.name ?? "",
+      email: account?.email ?? "",
+      phone,
+      plan: "Google account",
+      image: account?.image ?? null,
+    }),
+    [account, phone]
   );
 
   const updateProfile = useCallback(
     (patch: Partial<Profile>) => {
-      if (account) {
-        // Name and email come from Google and cannot be edited here, but the
-        // phone label is device-local and stays editable.
-        const identityChanged =
-          (patch.name !== undefined && patch.name !== account.name) ||
-          (patch.email !== undefined && patch.email !== account.email);
-        if (identityChanged) {
-          pushToast({
-            title: "Profile managed by Google",
-            description: "Your name and photo come from your Google account.",
-            tone: "neutral",
-          });
-        }
-        if (patch.phone !== undefined) {
-          const phone = patch.phone;
-          setDemoProfile((prev) => ({ ...prev, phone }));
-        }
-        return;
+      const identityChanged =
+        (patch.name !== undefined && patch.name !== (account?.name ?? "")) ||
+        (patch.email !== undefined && patch.email !== (account?.email ?? ""));
+      if (identityChanged) {
+        pushToast({
+          title: "Profile managed by Google",
+          description: "Your name and photo come from your Google account.",
+          tone: "neutral",
+        });
       }
-      setDemoProfile((prev) => ({ ...prev, ...patch }));
+      if (patch.phone !== undefined) {
+        setPhone(patch.phone);
+      }
     },
     [account, pushToast]
   );
@@ -326,7 +282,7 @@ export function CallShieldProvider({ children }: { children: ReactNode }) {
     const interval = window.setInterval(() => {
       setSession((prev) => {
         if (!prev || (prev.phase !== "screening" && prev.phase !== "user")) return prev;
-        const scenario = getScenario(prev.scenarioId);
+        const scenario = resolveScenario(prev);
         if (!scenario) return prev;
         // One line per tick; pause reveals entirely while a voice line plays.
         const maxSteps = speechHoldRef.current ? 0 : 1;
@@ -335,7 +291,7 @@ export function CallShieldProvider({ children }: { children: ReactNode }) {
     }, 1000);
 
     return () => window.clearInterval(interval);
-  }, [session?.id, session?.phase]);
+  }, [session?.id, session?.phase, resolveScenario]);
 
   useEffect(() => {
     if (!session) return;
@@ -374,7 +330,7 @@ export function CallShieldProvider({ children }: { children: ReactNode }) {
       }
       const scenario = getScenario(scenarioId);
       if (!scenario) return false;
-      setSession(callSimulationService.createSession(scenario));
+      setSession(callSimulationService.createSession(scenario, assistant));
       pushToast({
         title: "Simulated incoming call",
         description: `${scenario.number} is calling. No real phone line is involved.`,
@@ -382,7 +338,7 @@ export function CallShieldProvider({ children }: { children: ReactNode }) {
       });
       return true;
     },
-    [session, pushToast]
+    [session, assistant, pushToast]
   );
 
   const answerWithAI = useCallback(() => {
@@ -401,7 +357,7 @@ export function CallShieldProvider({ children }: { children: ReactNode }) {
   const finish = useCallback(
     (action: CallAction) => {
       if (!session) return;
-      const scenario = getScenario(session.scenarioId);
+      const scenario = resolveScenario(session);
       if (!scenario) return;
       const record = callSimulationService.finalize(session, scenario, action);
       setCalls((prev) => [record, ...prev]);
@@ -484,7 +440,7 @@ export function CallShieldProvider({ children }: { children: ReactNode }) {
         });
       }
     },
-    [session, assistant.notifyBlocked, assistant.notifySummaries, pushNotification, pushToast, syncServer]
+    [session, assistant.notifyBlocked, assistant.notifySummaries, pushNotification, pushToast, resolveScenario, syncServer]
   );
 
   const declineCall = useCallback(() => finish("declined"), [finish]);
@@ -504,15 +460,18 @@ export function CallShieldProvider({ children }: { children: ReactNode }) {
     });
   }, [pushToast]);
 
-  const sendUserMessage = useCallback((text: string) => {
-    const trimmed = text.trim();
-    if (!trimmed) return;
-    setSession((prev) => {
-      if (!prev || prev.phase !== "user") return prev;
-      const scenario = getScenario(prev.scenarioId);
-      return callSimulationService.speakAsUser(prev, trimmed, scenario);
-    });
-  }, []);
+  const sendUserMessage = useCallback(
+    (text: string) => {
+      const trimmed = text.trim();
+      if (!trimmed) return;
+      setSession((prev) => {
+        if (!prev || prev.phase !== "user") return prev;
+        const scenario = resolveScenario(prev);
+        return callSimulationService.speakAsUser(prev, trimmed, scenario);
+      });
+    },
+    [resolveScenario]
+  );
 
   const dismissSession = useCallback(() => {
     setSession((prev) => {
@@ -600,39 +559,21 @@ export function CallShieldProvider({ children }: { children: ReactNode }) {
   const resetDemoData = useCallback(() => {
     notifiedSessions.current.clear();
     speechHoldRef.current = false;
-    if (account) {
-      syncServer("/api/user/state", { method: "POST" });
-      const nextCalls = buildSeedCalls();
-      setCalls(nextCalls);
-      setBlocklist(buildSeedBlocklist());
-      setNotifications(buildSeedNotifications(nextCalls));
-      setAssistant(DEFAULT_ASSISTANT);
-      setSession(null);
-      pushToast({ title: "Account data restored", description: "Calls and blocklist were reset to the seeded demo state.", tone: "success" });
-      return;
-    }
+    syncServer("/api/user/state", { method: "POST" });
     const nextCalls = buildSeedCalls();
     setCalls(nextCalls);
     setBlocklist(buildSeedBlocklist());
     setNotifications(buildSeedNotifications(nextCalls));
     setAssistant(DEFAULT_ASSISTANT);
-    setDemoProfile(DEFAULT_PROFILE);
     setSession(null);
-    pushToast({ title: "Demo data restored", description: "Calls, blocklist, and settings were reset.", tone: "success" });
-  }, [account, pushToast, syncServer]);
+    pushToast({ title: "Account data restored", description: "Calls and blocklist were reset to the seeded state.", tone: "success" });
+  }, [pushToast, syncServer]);
 
   const seedHistory = useCallback(() => {
-    if (account) {
-      syncServer("/api/user/calls/seed", { method: "POST" });
-      const nextCalls = [...buildSeedCalls(), ...calls];
-      setCalls(nextCalls);
-      pushToast({ title: "Sample calls added", description: `${nextCalls.length} calls are in your account history.`, tone: "success" });
-      return;
-    }
-    const nextCalls = buildSeedCalls();
-    setCalls(nextCalls);
-    pushToast({ title: "Demo history added", description: `${nextCalls.length} sample calls are ready to explore.`, tone: "success" });
-  }, [account, calls, pushToast, syncServer]);
+    syncServer("/api/user/calls/seed", { method: "POST" });
+    setCalls((prev) => [...buildSeedCalls(), ...prev]);
+    pushToast({ title: "Sample calls added", description: "Sample calls are in your account history.", tone: "success" });
+  }, [pushToast, syncServer]);
 
   const clearHistory = useCallback(() => {
     setCalls([]);

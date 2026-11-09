@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { DesktopSidebar, SidebarContent } from "@/components/app/Sidebar";
@@ -15,7 +16,14 @@ import { useCallShield } from "@/lib/store";
 export function AppShell({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const { status } = useSession();
   const { hydrated } = useCallShield();
+
+  // The app is account-only: signed-out visitors go straight to sign-in.
+  useEffect(() => {
+    if (status === "unauthenticated") router.replace("/signin");
+  }, [status, router]);
 
   useEffect(() => {
     setMenuOpen(false);

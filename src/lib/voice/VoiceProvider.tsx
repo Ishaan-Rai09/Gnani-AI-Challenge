@@ -15,6 +15,7 @@ import { TTS_LANGUAGE, speechText } from "@/lib/voice/catalog";
 interface GnaniStatus {
   configured: boolean;
   mode: string;
+  voiceClone?: boolean;
   services?: {
     textToSpeech?: string;
     speechToText?: string;
@@ -33,6 +34,8 @@ interface SpeakOptions {
 interface VoiceContextValue {
   /** Server has a Gnani key. */
   configured: boolean;
+  /** Server has a voice-clone reference audio configured. */
+  voiceClone: boolean;
   /** Status request in flight. */
   checking: boolean;
   /** Audio failed for this session (bad key, network, autoplay). */
@@ -209,6 +212,7 @@ export function VoiceProvider({ children }: { children: ReactNode }) {
   const value = useMemo<VoiceContextValue>(
     () => ({
       configured: Boolean(status?.configured),
+      voiceClone: Boolean(status?.voiceClone),
       checking,
       available,
       enabled,
