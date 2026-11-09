@@ -19,11 +19,11 @@ export function DemoCta() {
           </div>
         </div>
         <div className="flex shrink-0 flex-col items-start gap-2 sm:flex-row sm:items-center">
-          <ButtonLink href="/app" variant="primary" size="lg">
-            Open Dashboard
+          <ButtonLink href="/signin" variant="primary" size="lg">
+            Sign in with Google
             <ArrowRight className="h-4 w-4" />
           </ButtonLink>
-          <span className="text-[10.5px] text-muted">Free demo · No sign-up</span>
+          <span className="text-[10.5px] text-muted">Free · simulated callers, no real telephony</span>
         </div>
       </div>
     </section>

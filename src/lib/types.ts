@@ -118,6 +118,8 @@ export interface Profile {
   email: string;
   phone: string;
   plan: string;
+  /** Google account photo, present only for signed-in users. */
+  image?: string | null;
 }
 
 export interface ListenerEvent {

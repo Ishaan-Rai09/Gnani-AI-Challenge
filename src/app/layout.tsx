@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
+import { SessionProvider } from "next-auth/react";
 import { CallShieldProvider } from "@/lib/store";
 import { VoiceProvider } from "@/lib/voice/VoiceProvider";
 import { ServiceWorkerRegister } from "@/components/system/ServiceWorkerRegister";
@@ -53,13 +54,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${inter.variable} ${space.variable}`}>
       <body>
-        <CallShieldProvider>
-          <VoiceProvider>
-            {children}
-            <ToastViewport />
-            <ServiceWorkerRegister />
-          </VoiceProvider>
-        </CallShieldProvider>
+        <SessionProvider>
+          <CallShieldProvider>
+            <VoiceProvider>
+              {children}
+              <ToastViewport />
+              <ServiceWorkerRegister />
+            </VoiceProvider>
+          </CallShieldProvider>
+        </SessionProvider>
       </body>
     </html>
   );

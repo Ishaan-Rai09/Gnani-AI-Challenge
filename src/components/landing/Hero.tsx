@@ -27,8 +27,8 @@ export function Hero() {
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <ButtonLink href="/app" variant="primary" size="lg" className="w-full sm:w-auto">
-              Try Live Demo
+            <ButtonLink href="/signin" variant="primary" size="lg" className="w-full sm:w-auto">
+              Sign in to get started
               <ArrowRight className="h-4 w-4" />
             </ButtonLink>
             <a href="#how-it-works">
@@ -39,7 +39,7 @@ export function Hero() {
           </div>
 
           <p className="mt-4 text-[11.5px] text-muted">
-            No account needed. Runs on simulated call data.
+            Free · sign in with Google, or continue in demo mode from the sign-in page.
           </p>
 
           <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-line pt-5 text-[11px] text-ink/50">
@@ -62,7 +62,7 @@ export function Hero() {
           <HeroCallDemo />
           <div className="mt-10 flex items-center justify-between text-[10.5px] text-muted sm:mt-12">
             <span>Product preview · fictional callers</span>
-            <Link href="/app/live" className="inline-flex items-center gap-1 font-medium text-ink/60 hover:text-ink">
+            <Link href="/signin" className="inline-flex items-center gap-1 font-medium text-ink/60 hover:text-ink">
               Open full experience
               <ArrowUpRight className="h-3 w-3" />
             </Link>

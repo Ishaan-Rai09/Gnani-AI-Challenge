@@ -159,6 +159,9 @@ export function TranscriptPanel({
   const voice = useVoice();
   const [value, setValue] = useState("");
   const [logOpen, setLogOpen] = useState(false);
+  // Hands-free: the mic stays on after take-over — it listens automatically,
+  // transcribes what you said, and re-arms itself without tapping each time.
+  const [handsFree, setHandsFree] = useState(true);
 
   const handling = session.phase === "user";
 
@@ -167,6 +170,24 @@ export function TranscriptPanel({
     enabled: handling && voice.configured && !disabled,
     onTranscript: (text) => onSend(text),
   });
+
+  // Auto-arm the mic in hands-free mode. It waits for caller audio to finish
+  // (echo cancellation is on, but not transcribing the caller is still nicer).
+  useEffect(() => {
+    if (!handling || !handsFree || disabled || !voice.configured) return;
+    if (ptt.state === "idle" && !ptt.error && !voice.speaking) {
+      const timer = window.setTimeout(() => void ptt.start(), 700);
+      return () => window.clearTimeout(timer);
+    }
+    return undefined;
+  }, [handling, handsFree, disabled, voice.configured, voice.speaking, ptt.state, ptt.error, ptt.start]);
+
+  // Leaving the call, disabling hands-free, or losing voice support stops the mic.
+  useEffect(() => {
+    if ((!handling || !handsFree || disabled || !voice.configured) && ptt.state === "recording") {
+      ptt.stop();
+    }
+  }, [handling, handsFree, disabled, voice.configured, ptt.state, ptt.stop]);
 
   const visibleLines = session.transcript.filter((entry) => entry.speaker !== "system");
   const captions = visibleLines.slice(-3);
@@ -179,11 +200,13 @@ export function TranscriptPanel({
   const transcribing = ptt.state === "transcribing";
 
   let statusLabel = "Assistant is listening";
-  if (recording) statusLabel = "Listening — speak now";
+  if (recording) statusLabel = handsFree ? "Mic is live — just speak" : "Listening — speak now";
   else if (transcribing) statusLabel = "Transcribing your reply…";
   else if (voice.speaking && speakingEntry?.speaker === "caller") statusLabel = "Caller is speaking";
   else if (voice.speaking) statusLabel = "CallShield AI is speaking";
-  else if (handling) statusLabel = "Your turn — tap the mic to speak";
+  else if (handling && voice.configured)
+    statusLabel = handsFree ? "Mic re-arming automatically…" : "Your turn — tap the mic to speak";
+  else if (handling) statusLabel = "Your turn — type your reply";
   else if (voice.configured && !voice.available) statusLabel = "Audio unavailable — captions only";
 
   const callerActive = recording || (voice.speaking && speakingEntry?.speaker === "caller");
@@ -379,16 +402,37 @@ export function TranscriptPanel({
                     : transcribing
                       ? "Sending your reply to Gnani…"
                       : voice.configured
-                        ? "Tap the mic and speak your reply"
+                        ? handsFree
+                          ? "Mic is always on — speak any time"
+                          : "Tap the mic and speak your reply"
                         : "Voice replies need GNANI_API_KEY"}
                 </p>
                 <p className="mt-0.5 text-[9px] leading-relaxed text-muted">
                   {voice.configured
-                    ? "Your clip is transcribed by Gnani Prisma and added to the call. Up to 25 seconds."
+                    ? handsFree
+                      ? "Hands-free: the mic re-arms after every reply, and the caller responds to what you say. Tap the mic to send instantly."
+                      : "Your clip is transcribed by Gnani Prisma and added to the call. Up to 25 seconds."
                     : "Add the key to .env.local and restart the server. You can type below for now."}
                 </p>
               </div>
               {recording && <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-signal" />}
+              {voice.configured && (
+                <button
+                  type="button"
+                  onClick={() => setHandsFree((current) => !current)}
+                  className={cx(
+                    "hidden shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-[9px] font-medium uppercase tracking-[0.08em] transition-colors sm:inline-flex",
+                    handsFree
+                      ? "border-signal/50 bg-signal/10 text-ink"
+                      : "border-line text-muted hover:border-ink/30 hover:text-ink"
+                  )}
+                  aria-pressed={handsFree}
+                  title={handsFree ? "Hands-free mic is on" : "Push-to-talk mode"}
+                >
+                  <Mic className="h-3 w-3" />
+                  {handsFree ? "Hands-free" : "Push to talk"}
+                </button>
+              )}
             </div>
 
             <div className="flex flex-wrap gap-1.5">

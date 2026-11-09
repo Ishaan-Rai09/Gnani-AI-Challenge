@@ -19,6 +19,14 @@ const ACTION_LABEL: Record<CallAction, string> = {
   declined: "Incoming call declined",
 };
 
+/** Generic caller rebuttals once the scripted conversation has run out. */
+const CALLER_FALLBACKS = [
+  "No no, please listen — this is urgent, I need your confirmation right now.",
+  "I assure you this is genuine. Can you verify your details for me first?",
+  "Fine, fine. But remember, if something goes wrong it is on you, not me.",
+  "Why are you doubting me? I am calling from the official department only.",
+];
+
 const ACTION_DETAIL: Record<CallAction, string> = {
   blocked: "The number was added to the blocklist and the interaction saved.",
   allowed: "The caller was marked as trusted and saved in call history.",
@@ -224,11 +232,64 @@ export const callSimulationService = {
     };
   },
 
-  speakAsUser(session: LiveSession, text: string): LiveSession {
-    return {
+  speakAsUser(
+    session: LiveSession,
+    text: string,
+    scenario?: Scenario
+  ): LiveSession {
+    const at = session.elapsedSec;
+    const next: LiveSession = {
       ...session,
-      transcript: [...session.transcript, conversationService.userLine(text, session.elapsedSec)],
+      transcript: [...session.transcript, conversationService.userLine(text, at)],
     };
+
+    if (!scenario) return next;
+
+    // The caller reacts to what the account holder just said by taking the
+    // next caller line from the script (or a generic rebuttal once the script
+    // is exhausted), so take-over mode stays a real back-and-forth.
+    const cursor = session.scriptCursor;
+    const callerIndex = scenario.script.findIndex(
+      (step, index) => index >= cursor && step.speaker === "caller"
+    );
+
+    if (callerIndex >= 0) {
+      const step = scenario.script[callerIndex];
+      next.transcript = [
+        ...next.transcript,
+        conversationService.lineFromStep(step.text, "caller", at + 2),
+      ];
+      next.scriptCursor = callerIndex + 1;
+      if (step.reveals) {
+        next.revealedIndicators = [...next.revealedIndicators];
+        for (const key of step.reveals) {
+          if (!next.revealedIndicators.includes(key)) next.revealedIndicators.push(key);
+        }
+      }
+      if (step.infoRequested) {
+        for (const item of step.infoRequested) {
+          if (!next.infoRequested.includes(item)) next.infoRequested = [...next.infoRequested, item];
+        }
+      }
+      if (step.intentKey) next.intentKey = step.intentKey;
+      if (typeof step.identityConfidence === "number") next.identityConfidence = step.identityConfidence;
+    } else {
+      const fallback = CALLER_FALLBACKS[session.transcript.length % CALLER_FALLBACKS.length];
+      next.transcript = [
+        ...next.transcript,
+        conversationService.lineFromStep(fallback, "caller", at + 2),
+      ];
+    }
+
+    const assessment = assessRisk(next.revealedIndicators);
+    next.riskLevel = assessment.level;
+    next.riskScore = assessment.score;
+    next.summary = riskAnalysisService.draftSummary(
+      scenario,
+      next.revealedIndicators,
+      next.infoRequested
+    );
+    return next;
   },
 
   finalize(

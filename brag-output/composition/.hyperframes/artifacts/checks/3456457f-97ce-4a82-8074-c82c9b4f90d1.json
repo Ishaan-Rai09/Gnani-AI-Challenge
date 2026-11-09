@@ -1,0 +1,1628 @@
+{
+  "ok": false,
+  "strict": false,
+  "browserSkipped": false,
+  "lint": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 7,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "composition_file_too_large",
+        "severity": "warning",
+        "message": "This HTML composition file has 344 lines. Smaller sub-compositions are easier to read, iterate on, and diff.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "E:\\Projects\\kavach\\brag-output\\composition\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Split coherent scenes or layers into separate .html files under compositions/, then mount them from the parent with data-composition-src so each file stays small enough to inspect, revise, and validate independently."
+      },
+      {
+        "code": "timeline_track_too_dense",
+        "severity": "warning",
+        "message": "Track 0 has 5 timed elements in this HTML file. Smaller sub-compositions keep timelines easier to read, iterate on, and diff.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "E:\\Projects\\kavach\\brag-output\\composition\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move coherent scene groups into separate .html files under compositions/ and mount them from the parent with data-composition-src so the timeline stays easier to inspect, revise, and validate."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<section id=\"s1\"> is a timeline element that contains nested <div>. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#s1",
+        "dataAttributes": {},
+        "sourceFile": "E:\\Projects\\kavach\\brag-output\\composition\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <section id=\"s1\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<section id=\"s2\"> is a timeline element that contains nested <div>. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#s2",
+        "dataAttributes": {},
+        "sourceFile": "E:\\Projects\\kavach\\brag-output\\composition\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <section id=\"s2\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<section id=\"s3\"> is a timeline element that contains nested <div>. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#s3",
+        "dataAttributes": {},
+        "sourceFile": "E:\\Projects\\kavach\\brag-output\\composition\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <section id=\"s3\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<section id=\"s4\"> is a timeline element that contains nested <div>. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#s4",
+        "dataAttributes": {},
+        "sourceFile": "E:\\Projects\\kavach\\brag-output\\composition\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <section id=\"s4\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<section id=\"s5\"> is a timeline element that contains nested <div>. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#s5",
+        "dataAttributes": {},
+        "sourceFile": "E:\\Projects\\kavach\\brag-output\\composition\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <section id=\"s5\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      }
+    ],
+    "filesScanned": 1
+  },
+  "runtime": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 16,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-ring1\" is 0.05s but its slot (data-duration) is 1.00s — the slot is shortened to the media length when rendered. Set data-duration to ~0.05s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-ring2\" is 0.05s but its slot (data-duration) is 1.00s — the slot is shortened to the media length when rendered. Set data-duration to ~0.05s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-card\" is 0.11s but its slot (data-duration) is 1.00s — the slot is shortened to the media length when rendered. Set data-duration to ~0.11s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-shield\" is 0.18s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.18s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-check\" is 0.12s but its slot (data-duration) is 1.50s — the slot is shortened to the media length when rendered. Set data-duration to ~0.12s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-line1\" is 0.11s but its slot (data-duration) is 0.80s — the slot is shortened to the media length when rendered. Set data-duration to ~0.11s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-line2\" is 0.11s but its slot (data-duration) is 0.80s — the slot is shortened to the media length when rendered. Set data-duration to ~0.11s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-chip1\" is 0.09s but its slot (data-duration) is 0.60s — the slot is shortened to the media length when rendered. Set data-duration to ~0.09s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-line3\" is 0.11s but its slot (data-duration) is 0.80s — the slot is shortened to the media length when rendered. Set data-duration to ~0.11s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-chip2\" is 0.06s but its slot (data-duration) is 0.60s — the slot is shortened to the media length when rendered. Set data-duration to ~0.06s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-line4\" is 0.11s but its slot (data-duration) is 0.80s — the slot is shortened to the media length when rendered. Set data-duration to ~0.11s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-chip3\" is 0.09s but its slot (data-duration) is 0.60s — the slot is shortened to the media length when rendered. Set data-duration to ~0.09s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-badge\" is 0.12s but its slot (data-duration) is 1.20s — the slot is shortened to the media length when rendered. Set data-duration to ~0.12s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-block\" is 0.06s but its slot (data-duration) is 0.60s — the slot is shortened to the media length when rendered. Set data-duration to ~0.06s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-toast\" is 0.11s but its slot (data-duration) is 0.80s — the slot is shortened to the media length when rendered. Set data-duration to ~0.11s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-bell\" is 0.65s but its slot (data-duration) is 2.40s — the slot is shortened to the media length when rendered. Set data-duration to ~0.65s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      }
+    ]
+  },
+  "layout": {
+    "ok": false,
+    "errorCount": 1,
+    "warningCount": 3,
+    "infoCount": 1,
+    "findings": [
+      {
+        "code": "text_box_overflow",
+        "severity": "error",
+        "time": 1.167,
+        "selector": "#s1Ghost",
+        "message": "Text extends outside its nearest visual/container box.",
+        "rect": {
+          "left": 520.22,
+          "top": 836.81,
+          "right": 2060,
+          "bottom": 1079.16,
+          "width": 1539.78,
+          "height": 242.35
+        },
+        "containerSelector": "#s1",
+        "text": "UNKNOWN",
+        "fixHint": "Text is 1540px x 242px inside 1920px x 1080px and overflows by up to 140px; widen the container to at least ~2060px, or allow wrapping with max-width/fitTextFontSize.",
+        "containerRect": {
+          "left": 0,
+          "top": 0,
+          "right": 1920,
+          "bottom": 1080,
+          "width": 1920,
+          "height": 1080
+        },
+        "overflow": {
+          "right": 140
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 520.22,
+          "y": 836.81,
+          "width": 1539.78,
+          "height": 242.35
+        },
+        "firstSeen": 1.167,
+        "lastSeen": 3.5,
+        "occurrences": 2,
+        "heldMs": 0,
+        "times": [
+          1.167,
+          3.5
+        ]
+      },
+      {
+        "code": "canvas_overflow",
+        "severity": "warning",
+        "time": 1.167,
+        "selector": "#s1Ghost",
+        "message": "Text extends outside the composition canvas.",
+        "rect": {
+          "left": 520.22,
+          "top": 749,
+          "right": 2060,
+          "bottom": 1170,
+          "width": 1539.78,
+          "height": 421
+        },
+        "containerSelector": "#root",
+        "text": "UNKNOWN",
+        "fixHint": "Move the text inward, reduce its size, or mark intentional off-canvas animation with data-layout-allow-overflow.",
+        "containerRect": {
+          "left": 0,
+          "top": 0,
+          "right": 1920,
+          "bottom": 1080,
+          "width": 1920,
+          "height": 1080
+        },
+        "overflow": {
+          "right": 140,
+          "bottom": 90
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 520.22,
+          "y": 749,
+          "width": 1539.78,
+          "height": 421
+        },
+        "firstSeen": 1.167,
+        "lastSeen": 3.5,
+        "occurrences": 2,
+        "heldMs": 0,
+        "times": [
+          1.167,
+          3.5
+        ]
+      },
+      {
+        "code": "container_overflow",
+        "severity": "warning",
+        "time": 1.167,
+        "selector": "#s1Glow",
+        "message": "Element extends outside a clipping layout container.",
+        "rect": {
+          "left": -260.05,
+          "top": -260.05,
+          "right": 640.05,
+          "bottom": 640.05,
+          "width": 900.09,
+          "height": 900.09
+        },
+        "containerSelector": "#s1",
+        "fixHint": "Resize/reposition the child or container, or mark intentional overflow with data-layout-allow-overflow.",
+        "containerRect": {
+          "left": 0,
+          "top": 0,
+          "right": 1920,
+          "bottom": 1080,
+          "width": 1920,
+          "height": 1080
+        },
+        "overflow": {
+          "left": 260.05,
+          "top": 260.05
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": -260.05,
+          "y": -260.05,
+          "width": 900.09,
+          "height": 900.09
+        },
+        "firstSeen": 1.167,
+        "lastSeen": 3.5,
+        "occurrences": 2,
+        "heldMs": 0,
+        "times": [
+          1.167,
+          3.5
+        ]
+      },
+      {
+        "code": "container_overflow",
+        "severity": "warning",
+        "time": 1.167,
+        "selector": "#s1Ghost",
+        "message": "Element extends outside a clipping layout container.",
+        "rect": {
+          "left": 520.22,
+          "top": 749,
+          "right": 2060,
+          "bottom": 1170,
+          "width": 1539.78,
+          "height": 421
+        },
+        "containerSelector": "#s1",
+        "fixHint": "Resize/reposition the child or container, or mark intentional overflow with data-layout-allow-overflow.",
+        "containerRect": {
+          "left": 0,
+          "top": 0,
+          "right": 1920,
+          "bottom": 1080,
+          "width": 1920,
+          "height": 1080
+        },
+        "overflow": {
+          "right": 140,
+          "bottom": 90
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 520.22,
+          "y": 749,
+          "width": 1539.78,
+          "height": 421
+        },
+        "firstSeen": 1.167,
+        "lastSeen": 3.5,
+        "occurrences": 2,
+        "heldMs": 0,
+        "times": [
+          1.167,
+          3.5
+        ]
+      },
+      {
+        "code": "text_box_overflow",
+        "severity": "info",
+        "time": 15.167,
+        "selector": "#s4Mark",
+        "message": "Text extends outside its nearest visual/container box.",
+        "rect": {
+          "left": 1227.17,
+          "top": 410,
+          "right": 1294,
+          "bottom": 576,
+          "width": 66.83,
+          "height": 166
+        },
+        "containerSelector": "#s4Quote",
+        "text": "”",
+        "fixHint": "Text is 67px x 166px inside 1180px x 204px and overflows by up to 60px; increase the container height to at least ~264px, or allow wrapping with max-width/fitTextFontSize.",
+        "containerRect": {
+          "left": 150,
+          "top": 470,
+          "right": 1330,
+          "bottom": 674.39,
+          "width": 1180,
+          "height": 204.39
+        },
+        "overflow": {
+          "top": 60
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 1227.17,
+          "y": 410,
+          "width": 66.83,
+          "height": 166
+        },
+        "firstSeen": 15.167,
+        "lastSeen": 15.167,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          15.167
+        ]
+      }
+    ],
+    "duration": 21,
+    "samples": [
+      1.167,
+      3.5,
+      5.833,
+      8.167,
+      10.5,
+      12.833,
+      15.167,
+      17.5,
+      19.833
+    ],
+    "transitionSamples": [],
+    "transitionSamplesDropped": 0,
+    "tolerance": 2,
+    "totalIssueCount": 5,
+    "truncated": false
+  },
+  "motion": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": false,
+    "samples": 0
+  },
+  "contrast": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 2,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "contrast_aa_failure",
+        "severity": "warning",
+        "message": "Contrast is 1.17:1; WCAG AA requires 3:1.",
+        "text": "UNKNOWN",
+        "fg": "rgb(34,40,50)",
+        "bg": "rgb(21,27,38)",
+        "ratio": 1.17,
+        "requiredRatio": 3,
+        "suggestedColor": "rgb(99,103,110)",
+        "large": true,
+        "selector": "#s1Ghost",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 520.21875,
+          "y": 749,
+          "width": 1539.78125,
+          "height": 421
+        },
+        "time": 1.167,
+        "times": [
+          1.167
+        ]
+      },
+      {
+        "code": "contrast_aa_failure",
+        "severity": "warning",
+        "message": "Contrast is 2.74:1; WCAG AA requires 3:1.",
+        "text": "”",
+        "fg": "rgb(255,107,53)",
+        "bg": "rgb(252,251,247)",
+        "ratio": 2.74,
+        "requiredRatio": 3,
+        "suggestedColor": "rgb(243,102,51)",
+        "large": true,
+        "selector": "#s4Mark",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 1227.171875,
+          "y": 428,
+          "width": 66.828125,
+          "height": 130
+        },
+        "time": 15.167,
+        "times": [
+          15.167
+        ]
+      }
+    ],
+    "enabled": true,
+    "samples": [
+      1.167,
+      5.833,
+      10.5,
+      15.167,
+      19.833
+    ],
+    "checked": 28,
+    "passed": 26
+  },
+  "craft": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 10,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 17 text elements stay under it for 0.5 s or more, the smallest \"Incoming call\" at 20 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "Incoming call",
+        "selector": "span.label-micro",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 255.25,
+          "y": 286.1,
+          "width": 199.8,
+          "height": 23.62
+        },
+        "time": 0.25,
+        "times": [
+          0.25,
+          1,
+          4.25,
+          7.875,
+          8.125,
+          8.125,
+          8.125,
+          8.375,
+          9.375,
+          10,
+          10.5,
+          11,
+          11.625,
+          12.125,
+          13.5,
+          14.375,
+          20.375
+        ],
+        "fontPx": 19.68,
+        "floorPx": 28,
+        "seconds": 3.75,
+        "elements": [
+          {
+            "selector": "span.label-micro",
+            "text": "Incoming call",
+            "fontPx": 19.68,
+            "time": 0.25,
+            "seconds": 3.75
+          },
+          {
+            "selector": "#s2Kicker",
+            "text": "AI call screening",
+            "fontPx": 20,
+            "time": 4.25,
+            "seconds": 3.25
+          },
+          {
+            "selector": "#s3Kicker",
+            "text": "Live screening",
+            "fontPx": 20,
+            "time": 7.875,
+            "seconds": 5.375
+          },
+          {
+            "selector": "#confCard > div:nth-of-type(1)",
+            "text": "Identity confidence",
+            "fontPx": 20,
+            "time": 8.125,
+            "seconds": 5.125
+          },
+          {
+            "selector": "#signalCard > div:nth-of-type(1)",
+            "text": "Risk signals",
+            "fontPx": 20,
+            "time": 8.125,
+            "seconds": 5.125
+          },
+          {
+            "selector": "#trow1 > div:nth-of-type(1)",
+            "text": "Caller",
+            "fontPx": 20,
+            "time": 8.375,
+            "seconds": 4.875
+          },
+          {
+            "selector": "#trow2 > div:nth-of-type(1)",
+            "text": "Assistant",
+            "fontPx": 20,
+            "time": 9.375,
+            "seconds": 3.875
+          },
+          {
+            "selector": "#trow3 > div:nth-of-type(1)",
+            "text": "Caller",
+            "fontPx": 20,
+            "time": 10.5,
+            "seconds": 2.75
+          },
+          {
+            "selector": "#trow4 > div:nth-of-type(1)",
+            "text": "Assistant",
+            "fontPx": 20,
+            "time": 11.625,
+            "seconds": 1.625
+          },
+          {
+            "selector": "#s4Kicker",
+            "text": "You approve every outcome",
+            "fontPx": 20,
+            "time": 13.5,
+            "seconds": 4
+          },
+          {
+            "selector": "#s5Micro",
+            "text": "AI call screening · interactive demo",
+            "fontPx": 20,
+            "time": 20.375,
+            "seconds": 0.625
+          },
+          {
+            "selector": "#chip2",
+            "text": "otp_request",
+            "fontPx": 21.54,
+            "time": 11,
+            "seconds": 2.25
+          },
+          {
+            "selector": "#chip3",
+            "text": "pressure_tactics",
+            "fontPx": 22.2,
+            "time": 12.125,
+            "seconds": 1.125
+          },
+          {
+            "selector": "#confRowSmall",
+            "text": "/ 100",
+            "fontPx": 24,
+            "time": 8.125,
+            "seconds": 5.125
+          },
+          {
+            "selector": "#chip1",
+            "text": "banking_credentials",
+            "fontPx": 24,
+            "time": 10,
+            "seconds": 3.25
+          },
+          {
+            "selector": "#s4QuoteBy",
+            "text": "— CallShield assistant, mid-screening",
+            "fontPx": 25,
+            "time": 14.375,
+            "seconds": 3.125
+          },
+          {
+            "selector": "#s1Sub",
+            "text": "Rahul Mehta (claimed) · Northbridge Bank (claimed)",
+            "fontPx": 27,
+            "time": 1,
+            "seconds": 3
+          }
+        ]
+      },
+      {
+        "code": "line_unread",
+        "severity": "warning",
+        "message": "\"Read the OTP now. Please don't hang up.\" (8 words) is on screen 1.93 s (±0.01 s), under its 2.17 s floor: hold it about 0.5 s + 0.3 s a word (2.90 s here) before it leaves or changes; see references/motion.md.",
+        "text": "Read the OTP now. Please don't hang up.",
+        "selector": "#s1Bubble",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 236,
+          "y": 556,
+          "width": 40.329999999999984,
+          "height": 40
+        },
+        "time": 2.07,
+        "words": 8,
+        "seconds": 1.93,
+        "floorSeconds": 2.175,
+        "measured": [
+          {
+            "time": 1.75,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 1.875,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 2,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 2.125,
+            "opacity": 1,
+            "heightPx": 40
+          },
+          {
+            "time": 2.25,
+            "opacity": 1,
+            "heightPx": 40
+          },
+          {
+            "time": 2.375,
+            "opacity": 1,
+            "heightPx": 40
+          },
+          {
+            "time": 2.5,
+            "opacity": 1,
+            "heightPx": 40
+          },
+          {
+            "time": 3.5,
+            "opacity": 1,
+            "heightPx": 40
+          },
+          {
+            "time": 3.625,
+            "opacity": 1,
+            "heightPx": 40
+          },
+          {
+            "time": 3.75,
+            "opacity": 1,
+            "heightPx": 40
+          },
+          {
+            "time": 3.875,
+            "opacity": 1,
+            "heightPx": 40
+          },
+          {
+            "time": 4,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 4.125,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 4.25,
+            "opacity": null,
+            "heightPx": null
+          }
+        ]
+      },
+      {
+        "code": "line_unread",
+        "severity": "warning",
+        "message": "\"Let AI Answer\" (3 words) is on screen 0.43 s (±0.01 s), under its 1.05 s floor: hold it about 0.5 s + 0.3 s a word (1.40 s here) before it leaves or changes; see references/motion.md.",
+        "text": "Let AI Answer",
+        "selector": "#s1Cta",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 194,
+          "y": 886.75,
+          "width": 194.11,
+          "height": 39
+        },
+        "time": 3.57,
+        "words": 3,
+        "seconds": 0.43,
+        "floorSeconds": 1.05,
+        "measured": [
+          {
+            "time": 3.25,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 3.375,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 3.5,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 3.625,
+            "opacity": 0.82,
+            "heightPx": 39
+          },
+          {
+            "time": 3.75,
+            "opacity": 1,
+            "heightPx": 39
+          },
+          {
+            "time": 3.875,
+            "opacity": 1,
+            "heightPx": 39
+          },
+          {
+            "time": 4,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 4.125,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 4.25,
+            "opacity": null,
+            "heightPx": null
+          }
+        ]
+      },
+      {
+        "code": "line_unread",
+        "severity": "warning",
+        "message": "\"An AI assistant screens unknown callers — before they rea...\" (10 words) is on screen 1.40 s (±0.01 s), under its 2.63 s floor: hold it about 0.5 s + 0.3 s a word (3.50 s here) before it leaves or changes; see references/motion.md.",
+        "text": "An AI assistant screens unknown callers — before they reach you.",
+        "selector": "#s2Sub",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 522.61,
+          "y": 682.78,
+          "width": 874.7799999999999,
+          "height": 34
+        },
+        "time": 6.102,
+        "words": 10,
+        "seconds": 1.398,
+        "floorSeconds": 2.625,
+        "measured": [
+          {
+            "time": 5.75,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 5.875,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 6,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 6.125,
+            "opacity": 0.63,
+            "heightPx": 34
+          },
+          {
+            "time": 6.25,
+            "opacity": 0.95,
+            "heightPx": 34
+          },
+          {
+            "time": 6.375,
+            "opacity": 1,
+            "heightPx": 34
+          },
+          {
+            "time": 6.5,
+            "opacity": 1,
+            "heightPx": 34
+          },
+          {
+            "time": 7,
+            "opacity": 1,
+            "heightPx": 34
+          },
+          {
+            "time": 7.125,
+            "opacity": 1,
+            "heightPx": 34
+          },
+          {
+            "time": 7.25,
+            "opacity": 1,
+            "heightPx": 34
+          },
+          {
+            "time": 7.375,
+            "opacity": 1,
+            "heightPx": 34
+          },
+          {
+            "time": 7.5,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 7.625,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 7.75,
+            "opacity": null,
+            "heightPx": null
+          }
+        ]
+      },
+      {
+        "code": "line_unread",
+        "severity": "warning",
+        "message": "\"banking_credentials\" (2 words) is on screen 0.10 s (±0.01 s), under its 0.40 s floor: hold it about 0.5 s + 0.3 s a word (1.10 s here) before it leaves or changes; see references/motion.md.",
+        "text": "banking_credentials",
+        "selector": "#chip1",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 1329.35,
+          "y": 610.3,
+          "width": 244.91000000000008,
+          "height": 30.399999999999977
+        },
+        "time": 10,
+        "words": 2,
+        "seconds": 0.102,
+        "floorSeconds": 0.4,
+        "measured": [
+          {
+            "time": 9.625,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 9.75,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 9.875,
+            "opacity": 0.45,
+            "heightPx": 23
+          },
+          {
+            "time": 10,
+            "opacity": 1,
+            "heightPx": 30
+          },
+          {
+            "time": 10.125,
+            "opacity": 1,
+            "heightPx": 30
+          },
+          {
+            "time": 10.25,
+            "opacity": 1,
+            "heightPx": 29
+          },
+          {
+            "time": 10.375,
+            "opacity": 1,
+            "heightPx": 29
+          }
+        ]
+      },
+      {
+        "code": "line_unread",
+        "severity": "warning",
+        "message": "\"otp_request\" (2 words) is on screen 0.10 s (±0.01 s), under its 0.40 s floor: hold it about 0.5 s + 0.3 s a word (1.10 s here) before it leaves or changes; see references/motion.md.",
+        "text": "otp_request",
+        "selector": "#chip2",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 1331.64,
+          "y": 685.3,
+          "width": 145.57999999999993,
+          "height": 30.399999999999977
+        },
+        "time": 11.102,
+        "words": 2,
+        "seconds": 0.102,
+        "floorSeconds": 0.4,
+        "measured": [
+          {
+            "time": 10.75,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 10.875,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 11,
+            "opacity": 0.74,
+            "heightPx": 26
+          },
+          {
+            "time": 11.125,
+            "opacity": 1,
+            "heightPx": 30
+          },
+          {
+            "time": 11.25,
+            "opacity": 1,
+            "heightPx": 29
+          },
+          {
+            "time": 11.375,
+            "opacity": 1,
+            "heightPx": 29
+          },
+          {
+            "time": 11.5,
+            "opacity": 1,
+            "heightPx": 29
+          }
+        ]
+      },
+      {
+        "code": "line_unread",
+        "severity": "warning",
+        "message": "\"\"The assistant can't share card details or one-time codes...\" (14 words) is on screen 1.60 s (±0.01 s), under its 3.53 s floor: hold it about 0.5 s + 0.3 s a word (4.70 s here) before it leaves or changes; see references/motion.md.",
+        "text": "\"The assistant can't share card details or one-time codes on an unverified call.\"",
+        "selector": "#trow4 > div:nth-of-type(2)",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 388,
+          "y": 673.73,
+          "width": 692.8299999999999,
+          "height": 75.01999999999998
+        },
+        "time": 11.539,
+        "words": 14,
+        "seconds": 1.602,
+        "floorSeconds": 3.525,
+        "measured": [
+          {
+            "time": 11.25,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 11.375,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 11.5,
+            "opacity": 0.34,
+            "heightPx": 75
+          },
+          {
+            "time": 11.625,
+            "opacity": 0.82,
+            "heightPx": 75
+          },
+          {
+            "time": 11.75,
+            "opacity": 0.99,
+            "heightPx": 75
+          },
+          {
+            "time": 11.875,
+            "opacity": 1,
+            "heightPx": 75
+          },
+          {
+            "time": 12,
+            "opacity": 1,
+            "heightPx": 75
+          },
+          {
+            "time": 12.75,
+            "opacity": 1,
+            "heightPx": 75
+          },
+          {
+            "time": 12.875,
+            "opacity": 1,
+            "heightPx": 75
+          },
+          {
+            "time": 13,
+            "opacity": 1,
+            "heightPx": 75
+          },
+          {
+            "time": 13.125,
+            "opacity": 1,
+            "heightPx": 75
+          },
+          {
+            "time": 13.25,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 13.375,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 13.5,
+            "opacity": null,
+            "heightPx": null
+          }
+        ]
+      },
+      {
+        "code": "line_unread",
+        "severity": "warning",
+        "message": "\"pressure_tactics\" (2 words) is on screen 0.13 s (±0.01 s), under its 0.40 s floor: hold it about 0.5 s + 0.3 s a word (1.10 s here) before it leaves or changes; see references/motion.md.",
+        "text": "pressure_tactics",
+        "selector": "#chip3",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 1330.15,
+          "y": 760.27,
+          "width": 201.67000000000007,
+          "height": 30.460000000000036
+        },
+        "time": 12.172,
+        "words": 2,
+        "seconds": 0.133,
+        "floorSeconds": 0.4,
+        "measured": [
+          {
+            "time": 11.875,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 12,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 12.125,
+            "opacity": 0.81,
+            "heightPx": 27
+          },
+          {
+            "time": 12.25,
+            "opacity": 1,
+            "heightPx": 30
+          },
+          {
+            "time": 12.375,
+            "opacity": 1,
+            "heightPx": 29
+          },
+          {
+            "time": 12.5,
+            "opacity": 1,
+            "heightPx": 29
+          },
+          {
+            "time": 12.625,
+            "opacity": 1,
+            "heightPx": 29
+          }
+        ]
+      },
+      {
+        "code": "line_unread",
+        "severity": "warning",
+        "message": "\"Blocked · saved to blocklist\" (4 words) is on screen 0.27 s (±0.01 s), under its 1.27 s floor: hold it about 0.5 s + 0.3 s a word (1.70 s here) before it leaves or changes; see references/motion.md.",
+        "text": "Blocked · saved to blocklist",
+        "selector": "#s4Toast",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 1391.17,
+          "y": 885.43,
+          "width": 346.8299999999999,
+          "height": 33
+        },
+        "time": 17.234,
+        "words": 4,
+        "seconds": 0.266,
+        "floorSeconds": 1.275,
+        "measured": [
+          {
+            "time": 16.875,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 17,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 17.125,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 17.25,
+            "opacity": 0.61,
+            "heightPx": 33
+          },
+          {
+            "time": 17.375,
+            "opacity": 0.96,
+            "heightPx": 33
+          },
+          {
+            "time": 17.5,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 17.625,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 17.75,
+            "opacity": null,
+            "heightPx": null
+          }
+        ]
+      },
+      {
+        "code": "line_unread",
+        "severity": "warning",
+        "message": "The film's last line \"Not every call deserves your attention.\" (6 words) is on screen 1.80 s (±0.01 s), under the 2.00 s a closing line needs: hold it about 0.5 s + 0.3 s a word and at least 2 s before the film ends; see references/motion.md.",
+        "text": "Not every call deserves your attention.",
+        "selector": "#s5Headline",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 240.36,
+          "y": 529.47,
+          "width": 1439.27,
+          "height": 108
+        },
+        "time": 19.203,
+        "words": 6,
+        "seconds": 1.801,
+        "floorSeconds": 2,
+        "measured": [
+          {
+            "time": 18.875,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 19,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 19.125,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 19.25,
+            "opacity": 0.71,
+            "heightPx": 108
+          },
+          {
+            "time": 19.375,
+            "opacity": 0.95,
+            "heightPx": 108
+          },
+          {
+            "time": 19.5,
+            "opacity": 1,
+            "heightPx": 108
+          },
+          {
+            "time": 19.625,
+            "opacity": 1,
+            "heightPx": 108
+          },
+          {
+            "time": 20.5,
+            "opacity": 1,
+            "heightPx": 108
+          },
+          {
+            "time": 20.625,
+            "opacity": 1,
+            "heightPx": 108
+          },
+          {
+            "time": 20.75,
+            "opacity": 1,
+            "heightPx": 108
+          },
+          {
+            "time": 20.875,
+            "opacity": 1,
+            "heightPx": 108
+          }
+        ]
+      }
+    ],
+    "enabled": true,
+    "step": 0.125,
+    "samples": 168
+  },
+  "audio": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": []
+  },
+  "hdr": {
+    "autoPromotion": null,
+    "inspection": "available"
+  },
+  "snapshots": {
+    "enabled": false,
+    "files": [],
+    "times": [],
+    "findingFiles": []
+  }
+}

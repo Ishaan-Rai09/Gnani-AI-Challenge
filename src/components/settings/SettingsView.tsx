@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 import {
   Check,
   Download,
   Info,
   Lock,
+  LogOut,
   MonitorSmartphone,
   RotateCcw,
   Save,
@@ -28,6 +30,8 @@ interface InstallPromptEvent extends Event {
 export function SettingsView() {
   const {
     profile,
+    account,
+    accountStatus,
     updateProfile,
     calls,
     blocklist,
@@ -38,6 +42,8 @@ export function SettingsView() {
     seedHistory,
     pushToast,
   } = useCallShield();
+
+  const signedIn = Boolean(account);
 
   const [name, setName] = useState(profile.name);
   const [email, setEmail] = useState(profile.email);
@@ -102,6 +108,29 @@ export function SettingsView() {
     setInstallPrompt(null);
   }
 
+  function signInWithGoogle() {
+    // Read the live provider list: if Google credentials are missing on the
+    // server, explain the setup instead of bouncing to a broken sign-in page.
+    void (async () => {
+      try {
+        const response = await fetch("/api/auth/providers", { cache: "no-store" });
+        const providers = (await response.json()) as Record<string, unknown>;
+        if (Object.keys(providers).length === 0) {
+          pushToast({
+            title: "Google sign-in isn't configured yet",
+            description: "Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to .env, then restart the server.",
+            tone: "neutral",
+          });
+          return;
+        }
+        const { signIn } = await import("next-auth/react");
+        void signIn("google", { callbackUrl: "/app" });
+      } catch {
+        pushToast({ title: "Sign-in is unavailable right now", tone: "risk" });
+      }
+    })();
+  }
+
   function exportData() {
     const payload = {
       exportedAt: new Date().toISOString(),
@@ -119,21 +148,22 @@ export function SettingsView() {
     anchor.download = "callshield-demo-data.json";
     anchor.click();
     URL.revokeObjectURL(url);
-    pushToast({ title: "Demo data exported", description: "A JSON file was downloaded.", tone: "success" });
+    pushToast({ title: "Data exported", description: "A JSON file was downloaded.", tone: "success" });
   }
 
   return (
     <div className="mx-auto w-full max-w-[1040px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       <div>
         <p className="text-[9.5px] font-semibold uppercase tracking-[0.16em] text-muted">
-          Account · local prototype
+          Account {signedIn ? "· Google" : "· local prototype"}
         </p>
         <h2 className="mt-2 text-[28px] font-semibold leading-none tracking-[-0.04em] sm:text-[32px]">
           Your account, your data.
         </h2>
         <p className="mt-2 max-w-[560px] text-[12.5px] leading-relaxed text-muted">
-          This is a demo profile. Everything is stored in your browser, and the data controls below
-          let you reset or export it at any time.
+          {signedIn
+            ? "You're signed in with Google. Your call history and blocklist are saved to your account and follow you across devices."
+            : "This is a demo profile. Everything is stored in this browser. Sign in with Google to keep your history and blocklist on your account."}
         </p>
       </div>
 
@@ -145,85 +175,160 @@ export function SettingsView() {
               <h3 className="text-[13.5px] font-semibold">Profile</h3>
             </div>
             <p className="mt-0.5 text-[11px] text-muted">
-              Used for the dashboard greeting and this demo only.
+              {signedIn
+                ? "Your name, email, and photo come straight from your Google account."
+                : "Used for the dashboard greeting and this demo only."}
             </p>
 
             <div className="mt-4 flex items-center gap-3 border-b border-line pb-4">
-              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ink text-[13px] font-bold text-ivory">
-                {initials(name || "CallShield")}
-              </span>
-              <div>
-                <p className="text-[12.5px] font-semibold">{name || "Your name"}</p>
-                <p className="text-[10px] text-muted">{profile.plan}</p>
+              {profile.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={profile.image}
+                  alt=""
+                  referrerPolicy="no-referrer"
+                  className="h-11 w-11 rounded-full border border-line object-cover"
+                />
+              ) : (
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ink text-[13px] font-bold text-ivory">
+                  {initials(profile.name || "CallShield")}
+                </span>
+              )}
+              <div className="min-w-0">
+                <p className="truncate text-[12.5px] font-semibold">{profile.name || "Your name"}</p>
+                <p className="truncate text-[10px] text-muted">{signedIn ? profile.email : profile.plan}</p>
               </div>
-              <span className="ml-auto rounded-full border border-line bg-white px-2 py-0.5 text-[8.5px] font-medium uppercase tracking-[0.1em] text-muted">
-                Demo account
-              </span>
+              {accountStatus === "loading" ? null : (
+                <span className="ml-auto shrink-0 rounded-full border border-line bg-white px-2 py-0.5 text-[8.5px] font-medium uppercase tracking-[0.1em] text-muted">
+                  {signedIn ? "Google account" : "Demo account"}
+                </span>
+              )}
             </div>
 
-            <form onSubmit={saveProfile} className="mt-4 space-y-3.5">
-              <div>
-                <label htmlFor="profile-name" className="mb-1.5 block text-[11px] font-medium text-ink/70">
-                  Full name
-                </label>
-                <input
-                  id="profile-name"
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                  className="input-base"
-                />
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
+            {signedIn ? (
+              <div className="mt-4 space-y-3.5">
                 <div>
-                  <label htmlFor="profile-email" className="mb-1.5 block text-[11px] font-medium text-ink/70">
-                    Email
+                  <label htmlFor="account-name" className="mb-1.5 block text-[11px] font-medium text-ink/70">
+                    Full name
                   </label>
-                  <input
-                    id="profile-email"
-                    type="email"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    className="input-base"
-                  />
+                  <input id="account-name" value={profile.name} readOnly className="input-base opacity-70" />
                 </div>
-                <div>
-                  <label htmlFor="profile-phone" className="mb-1.5 block text-[11px] font-medium text-ink/70">
-                    Phone label
-                  </label>
-                  <input
-                    id="profile-phone"
-                    value={phone}
-                    onChange={(event) => setPhone(event.target.value)}
-                    className="input-base"
-                  />
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="account-email" className="mb-1.5 block text-[11px] font-medium text-ink/70">
+                      Email
+                    </label>
+                    <input id="account-email" value={profile.email} readOnly className="input-base opacity-70" />
+                  </div>
+                  <div>
+                    <label htmlFor="account-phone" className="mb-1.5 block text-[11px] font-medium text-ink/70">
+                      Phone label
+                    </label>
+                    <input
+                      id="account-phone"
+                      value={phone}
+                      onChange={(event) => setPhone(event.target.value)}
+                      onBlur={() => updateProfile({ phone: phone.trim() })}
+                      className="input-base"
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center justify-between gap-3 pt-1">
+                  <p className="text-[9.5px] text-muted">Manage your photo and name at myaccount.google.com.</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => void signOut({ callbackUrl: "/" })}
+                  >
+                    <LogOut className="h-3 w-3" />
+                    Sign out
+                  </Button>
                 </div>
               </div>
-              <div className="flex items-center justify-between gap-3 pt-1">
-                <p className="text-[9.5px] text-muted">No verification or account email is sent.</p>
-                <Button type="submit" size="sm" variant="ink">
-                  {saved ? <Check className="h-3 w-3" /> : <Save className="h-3 w-3" />}
-                  {saved ? "Saved" : "Save profile"}
-                </Button>
-              </div>
-            </form>
+            ) : (
+              <>
+                <form onSubmit={saveProfile} className="mt-4 space-y-3.5">
+                  <div>
+                    <label htmlFor="profile-name" className="mb-1.5 block text-[11px] font-medium text-ink/70">
+                      Full name
+                    </label>
+                    <input
+                      id="profile-name"
+                      value={name}
+                      onChange={(event) => setName(event.target.value)}
+                      className="input-base"
+                    />
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <label htmlFor="profile-email" className="mb-1.5 block text-[11px] font-medium text-ink/70">
+                        Email
+                      </label>
+                      <input
+                        id="profile-email"
+                        type="email"
+                        value={email}
+                        onChange={(event) => setEmail(event.target.value)}
+                        className="input-base"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="profile-phone" className="mb-1.5 block text-[11px] font-medium text-ink/70">
+                        Phone label
+                      </label>
+                      <input
+                        id="profile-phone"
+                        value={phone}
+                        onChange={(event) => setPhone(event.target.value)}
+                        className="input-base"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between gap-3 pt-1">
+                    <p className="text-[9.5px] text-muted">No verification or account email is sent.</p>
+                    <Button type="submit" size="sm" variant="ink">
+                      {saved ? <Check className="h-3 w-3" /> : <Save className="h-3 w-3" />}
+                      {saved ? "Saved" : "Save profile"}
+                    </Button>
+                  </div>
+                </form>
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
+                  <p className="text-[10.5px] text-muted">
+                    Sign in to save calls and blocked numbers to your account instead of this browser.
+                  </p>
+                  <Button variant="ink" size="sm" onClick={signInWithGoogle} disabled={accountStatus === "loading"}>
+                    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
+                      <path
+                        fill="currentColor"
+                        d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27 3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10 5.35 0 9.25-3.67 9.25-9.09 0-1.15-.15-1.81-.15-1.81"
+                      />
+                    </svg>
+                    Sign in with Google
+                  </Button>
+                </div>
+              </>
+            )}
           </section>
 
           <section className="rounded-xl border border-line bg-paper p-5">
             <div className="flex items-center gap-2">
               <RotateCcw className="h-3.5 w-3.5 text-ink/40" />
-              <h3 className="text-[13.5px] font-semibold">Demo data</h3>
+              <h3 className="text-[13.5px] font-semibold">Data controls</h3>
             </div>
             <p className="mt-0.5 text-[11px] leading-relaxed text-muted">
-              CallShield ships with seeded history so the experience works immediately. These
-              controls only affect this browser.
+              {signedIn
+                ? "These controls affect the data saved to your account. Sample callers are fictional."
+                : "CallShield ships with seeded history so the experience works immediately. These controls only affect this browser."}
             </p>
 
             <div className="mt-3 divide-y divide-line/70">
               <div className="flex flex-wrap items-center justify-between gap-3 py-3">
                 <div>
-                  <p className="text-[11.5px] font-medium text-ink/80">Restore demo data</p>
+                  <p className="text-[11.5px] font-medium text-ink/80">
+                    {signedIn ? "Restore sample data" : "Restore demo data"}
+                  </p>
                   <p className="mt-0.5 text-[10px] text-muted">
-                    Reset calls, blocklist, notifications, assistant, and profile to their seeded state.
+                    Reset calls, blocklist, notifications, and assistant to their seeded state.
                   </p>
                 </div>
                 <Button variant="outline" size="sm" onClick={() => setConfirmReset(true)}>
@@ -252,7 +357,7 @@ export function SettingsView() {
 
               <div className="flex flex-wrap items-center justify-between gap-3 py-3">
                 <div>
-                  <p className="text-[11.5px] font-medium text-ink/80">Export demo data</p>
+                  <p className="text-[11.5px] font-medium text-ink/80">Export data</p>
                   <p className="mt-0.5 text-[10px] text-muted">
                     Download a JSON snapshot of calls, blocklist, settings, and notifications.
                   </p>
@@ -302,8 +407,9 @@ export function SettingsView() {
               <h3 className="text-[13.5px] font-semibold">Privacy &amp; storage</h3>
             </div>
             <p className="mt-1 text-[11px] leading-relaxed text-muted">
-              Calls, transcripts, blocklist entries, and settings are stored in this browser via
-              local storage. No call audio is captured and nothing is uploaded.
+              {signedIn
+                ? "Calls, transcripts, and blocklist entries are saved to your account on the CallShield server. Assistant settings stay on this device. No call audio is captured."
+                : "Calls, transcripts, blocklist entries, and settings are stored in this browser via local storage. No call audio is captured and nothing is uploaded."}
             </p>
             <div className="mt-3 space-y-2 border-t border-line pt-3">
               <div className="flex items-center justify-between">
@@ -345,7 +451,9 @@ export function SettingsView() {
             </Link>
           </section>
 
-          <p className="px-1 text-[9px] text-muted">CallShield prototype · v0.1 · demo mode</p>
+          <p className="px-1 text-[9px] text-muted">
+            CallShield prototype · v0.1 · {signedIn ? "account mode" : "demo mode"}
+          </p>
         </div>
       </div>
 
@@ -353,9 +461,9 @@ export function SettingsView() {
         open={confirmReset}
         onClose={() => setConfirmReset(false)}
         onConfirm={resetDemoData}
-        title="Reset all demo data?"
+        title={signedIn ? "Reset account data?" : "Reset all demo data?"}
         description="Calls, blocklist entries, notifications, and settings will be replaced with the seeded demo state."
-        confirmLabel="Reset demo"
+        confirmLabel={signedIn ? "Reset account data" : "Reset demo"}
         cancelLabel="Keep my data"
       />
       <ConfirmDialog

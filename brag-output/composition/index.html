@@ -60,7 +60,7 @@
       }
       .label-micro {
         font-family: "Inter";
-        font-size: 20px;
+        font-size: 28px;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.16em;
@@ -102,11 +102,11 @@
       }
       #s1Ghost {
         position: absolute;
-        right: -140px;
-        bottom: -90px;
+        right: 90px;
+        bottom: 30px;
         font-family: "Space Grotesk";
         font-weight: 700;
-        font-size: 330px;
+        font-size: 230px;
         letter-spacing: -0.03em;
         color: rgba(245, 243, 237, 0.06);
         white-space: nowrap;
@@ -164,7 +164,7 @@
       }
       #s1Sub {
         margin-top: 14px;
-        font-size: 27px;
+        font-size: 28px;
         color: var(--muted-dark);
       }
       #s1Hr {
@@ -318,10 +318,10 @@
         border-top: 1px solid var(--line);
       }
       .tspeak {
-        flex: 0 0 190px;
-        font-size: 20px;
+        flex: 0 0 226px;
+        font-size: 28px;
         font-weight: 600;
-        letter-spacing: 0.12em;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
         border-radius: 8px;
         padding: 10px 0;
@@ -371,7 +371,7 @@
         color: var(--ink);
       }
       #confRowSmall {
-        font-size: 24px;
+        font-size: 28px;
         color: var(--muted-dark);
       }
       #confTrack {
@@ -400,7 +400,7 @@
         border: 3px solid var(--signal);
         color: var(--ink);
         font-family: "Inter";
-        font-size: 24px;
+        font-size: 28px;
         font-weight: 600;
         padding: 12px 24px;
         border-radius: 10px;
@@ -450,7 +450,7 @@
       }
       #s4QuoteBy {
         margin-top: 18px;
-        font-size: 25px;
+        font-size: 28px;
         color: var(--muted-dark);
       }
       #s4Mark {
@@ -460,7 +460,7 @@
         font-family: "Space Grotesk";
         font-weight: 700;
         font-size: 130px;
-        color: var(--signal);
+        color: rgb(243, 102, 51);
         line-height: 1;
       }
       #s4Actions {
@@ -560,9 +560,9 @@
       data-height="1080"
     >
       <!-- ================= SCENE 1 — HOOK (0-4s) ================= -->
-      <section id="s1" class="clip clip-dark" data-start="0" data-duration="4" data-track-index="0">
+      <section id="s1" class="clip clip-dark" data-start="0" data-duration="4.5" data-track-index="0">
         <div class="appgrid-dark"></div>
-        <div id="s1Glow"></div>
+        <div id="s1Glow" data-layout-allow-overflow></div>
         <div id="s1Ghost">UNKNOWN</div>
 
         <div id="s1Card">
@@ -590,7 +590,7 @@
       </section>
 
       <!-- ================= SCENE 2 — REVEAL (4-7.5s) ================= -->
-      <section id="s2" class="clip clip-light" data-start="4" data-duration="3.5" data-track-index="0">
+      <section id="s2" class="clip clip-light" data-start="4.5" data-duration="3.5" data-track-index="0">
         <div class="appgrid-light"></div>
         <div id="s2Wrap">
           <div id="s2Kicker" class="label-micro">
@@ -605,13 +605,12 @@
             <div id="s2Wordmark">CallShield</div>
           </div>
           <div id="s2Tagline">Your calls. Your control.</div>
-          <div id="s2Sub">An AI assistant screens unknown callers — before they reach you.</div>
           <div id="s2Rule"></div>
         </div>
       </section>
 
       <!-- ================= SCENE 3 — LIVE SCREENING (7.5-13.11s) ================= -->
-      <section id="s3" class="clip clip-dark" data-start="7.5" data-duration="5.61" data-track-index="0">
+      <section id="s3" class="clip clip-dark" data-start="8" data-duration="5.11" data-track-index="0">
         <div class="appgrid-dark"></div>
         <div id="s3Top">
           <div id="s3Kicker" class="label-micro">
@@ -671,7 +670,7 @@
         <div id="s4Headline">The AI never gives up a code.</div>
 
         <div id="s4Quote">
-          <div id="s4Mark">&rdquo;</div>
+          <div id="s4Mark" data-layout-allow-overflow>&rdquo;</div>
           <div id="s4QuoteText">"I won't be sharing any codes."</div>
           <div id="s4QuoteBy">— CallShield assistant, mid-screening</div>
         </div>
@@ -680,11 +679,6 @@
           <div class="actbtn actbtn-outline" id="s4Takeover">Take Over</div>
           <div class="actbtn actbtn-outline" id="s4Allow">Allow</div>
           <div class="actbtn" id="s4Block">Block</div>
-        </div>
-
-        <div id="s4Toast">
-          <span class="dot"></span>
-          Blocked &middot; saved to blocklist
         </div>
       </section>
 
@@ -721,18 +715,17 @@
       <audio id="sfx-ring1" src="assets/sfx/interface/select_008.ogg" data-start="0.7" data-duration="1" data-track-index="11" data-volume="0.4"></audio>
       <audio id="sfx-ring2" src="assets/sfx/interface/select_008.ogg" data-start="1.8" data-duration="1" data-track-index="12" data-volume="0.32"></audio>
       <audio id="sfx-card" src="assets/sfx/interface/drop_001.ogg" data-start="0.42" data-duration="1" data-track-index="13" data-volume="0.5"></audio>
-      <audio id="sfx-shield" src="assets/sfx/impact/impactSoft_medium_001.ogg" data-start="4.3" data-duration="1.2" data-track-index="14" data-volume="0.55"></audio>
-      <audio id="sfx-check" src="assets/sfx/interface/bong_001.ogg" data-start="6.95" data-duration="1.5" data-track-index="15" data-volume="0.5"></audio>
-      <audio id="sfx-line1" src="assets/sfx/interface/drop_001.ogg" data-start="8.19" data-duration="0.8" data-track-index="16" data-volume="0.35"></audio>
-      <audio id="sfx-line2" src="assets/sfx/interface/drop_001.ogg" data-start="9.29" data-duration="0.8" data-track-index="17" data-volume="0.35"></audio>
-      <audio id="sfx-chip1" src="assets/sfx/ui/click1.ogg" data-start="9.83" data-duration="0.6" data-track-index="18" data-volume="0.45"></audio>
-      <audio id="sfx-line3" src="assets/sfx/interface/drop_001.ogg" data-start="10.37" data-duration="0.8" data-track-index="19" data-volume="0.35"></audio>
-      <audio id="sfx-chip2" src="assets/sfx/ui/click2.ogg" data-start="10.93" data-duration="0.6" data-track-index="20" data-volume="0.45"></audio>
-      <audio id="sfx-line4" src="assets/sfx/interface/drop_001.ogg" data-start="11.46" data-duration="0.8" data-track-index="21" data-volume="0.35"></audio>
-      <audio id="sfx-chip3" src="assets/sfx/ui/click1.ogg" data-start="12.02" data-duration="0.6" data-track-index="22" data-volume="0.45"></audio>
+      <audio id="sfx-shield" src="assets/sfx/impact/impactSoft_medium_001.ogg" data-start="4.8" data-duration="1.2" data-track-index="14" data-volume="0.55"></audio>
+      <audio id="sfx-check" src="assets/sfx/interface/bong_001.ogg" data-start="7.5" data-duration="1.5" data-track-index="15" data-volume="0.5"></audio>
+      <audio id="sfx-line1" src="assets/sfx/interface/drop_001.ogg" data-start="8.74" data-duration="0.8" data-track-index="16" data-volume="0.35"></audio>
+      <audio id="sfx-line2" src="assets/sfx/interface/drop_001.ogg" data-start="9.83" data-duration="0.8" data-track-index="17" data-volume="0.35"></audio>
+      <audio id="sfx-chip1" src="assets/sfx/ui/click1.ogg" data-start="9.29" data-duration="0.6" data-track-index="18" data-volume="0.45"></audio>
+      <audio id="sfx-line3" src="assets/sfx/interface/drop_001.ogg" data-start="10.93" data-duration="0.8" data-track-index="19" data-volume="0.35"></audio>
+      <audio id="sfx-chip2" src="assets/sfx/ui/click2.ogg" data-start="10.37" data-duration="0.6" data-track-index="20" data-volume="0.45"></audio>
+      <audio id="sfx-line4" src="assets/sfx/interface/drop_001.ogg" data-start="12.02" data-duration="0.8" data-track-index="21" data-volume="0.35"></audio>
+      <audio id="sfx-chip3" src="assets/sfx/ui/click1.ogg" data-start="11.46" data-duration="0.6" data-track-index="22" data-volume="0.45"></audio>
       <audio id="sfx-badge" src="assets/sfx/impact/impactSoft_medium_000.ogg" data-start="12.55" data-duration="1.2" data-track-index="23" data-volume="0.6"></audio>
       <audio id="sfx-block" src="assets/sfx/ui/click2.ogg" data-start="16.93" data-duration="0.6" data-track-index="24" data-volume="0.6"></audio>
-      <audio id="sfx-toast" src="assets/sfx/interface/drop_001.ogg" data-start="17.15" data-duration="0.8" data-track-index="25" data-volume="0.4"></audio>
       <audio id="sfx-bell" src="assets/sfx/impact/impactBell_heavy_003.ogg" data-start="18.56" data-duration="2.4" data-track-index="26" data-volume="0.6"></audio>
     </div>
 
@@ -759,7 +752,7 @@
       // ---------- Timeline ----------
       var tl = gsap.timeline({ paused: true });
 
-      // ===== Scene 1 — hook (0-4s) =====
+      // ===== Scene 1 — hook (0-4.5s) =====
       // phone card rises in
       tl.fromTo(
         "#s1Card",
@@ -781,60 +774,59 @@
         0.94
       );
       // number + claimed identity
-      tl.fromTo("#s1Number", { y: 34, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power3.out" }, 0.66);
-      tl.fromTo("#s1Sub", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power3.out" }, 0.88);
-      tl.fromTo("#s1Hr", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, 1.09);
+      tl.fromTo("#s1Number", { y: 34, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power3.out" }, 0.7);
+      tl.fromTo("#s1Sub", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power3.out" }, 0.95);
+      tl.fromTo("#s1Hr", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, 1.2);
       // right headline, word by word
-      tl.fromTo("#s1Headline div", { y: 46, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, stagger: 0.14, ease: "power3.out" }, 1.3);
-      // the demand types in (real scam script line)
-      tl.to("#s1Type span", { opacity: 1, duration: 0.012, stagger: 0.032, ease: "none" }, 2.05);
+      tl.fromTo("#s1Headline div", { y: 46, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, stagger: 0.14, ease: "power3.out" }, 1.35);
+      // the demand types in (real scam script line) — held through the scene end
+      tl.to("#s1Type span", { opacity: 1, duration: 0.012, stagger: 0.022, ease: "none" }, 1.5);
       // product CTA appears as the demand lands
-      tl.fromTo("#s1Cta", { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "back.out(1.7)" }, 3.5);
+      tl.fromTo("#s1Cta", { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "back.out(1.7)" }, 3.05);
 
-      // ===== Scene 2 — reveal (4-7.5s) =====
-      tl.fromTo("#s2Kicker", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 4.15);
+      // ===== Scene 2 — reveal (4.5-8s) =====
+      tl.fromTo("#s2Kicker", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 4.65);
       tl.fromTo(
         "#s2Shield",
         { scale: 0.7, opacity: 0 },
         { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.6)" },
-        4.39
-      ); // beat-locked: 4.39
-      tl.fromTo("#s2Wordmark", { y: 44, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 4.91);
-      tl.fromTo("#s2Tagline", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power3.out" }, 5.34);
-      tl.fromTo("#s2Sub", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power3.out" }, 6.0);
-      tl.fromTo("#s2Rule", { scaleX: 0 }, { scaleX: 1, duration: 0.55, ease: "power2.inOut" }, 5.6);
+        4.91
+      ); // beat-locked: 4.91
+      tl.fromTo("#s2Wordmark", { y: 44, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 5.34);
+      tl.fromTo("#s2Tagline", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power3.out" }, 6.0);
+      tl.fromTo("#s2Rule", { scaleX: 0 }, { scaleX: 1, duration: 0.55, ease: "power2.inOut" }, 6.56);
       // the orange check draws itself — completes on the beat
-      tl.to("#s2Check", { strokeDashoffset: 0, duration: 1.39, ease: "power2.inOut" }, 5.7); // beat-locked: 7.09 (completion)
+      tl.to("#s2Check", { strokeDashoffset: 0, duration: 1.54, ease: "power2.inOut" }, 6.1); // beat-locked: 7.64 (completion)
 
-      // ===== Scene 3 — live screening (7.5-13.11s) =====
-      tl.fromTo("#s3Kicker", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 7.7);
-      tl.fromTo("#s3Scenario", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 7.82);
-      tl.fromTo("#s3Transcript", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 7.9);
-      tl.fromTo("#s3Side", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 7.98);
+      // ===== Scene 3 — live screening (8-13.11s) =====
+      tl.fromTo("#s3Kicker", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 8.1);
+      tl.fromTo("#s3Scenario", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 8.2);
+      tl.fromTo("#s3Transcript", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 8.25);
+      tl.fromTo("#s3Side", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 8.3);
       // transcript rows on the beat grid (every other beat — reading floor respected)
-      tl.fromTo("#trow1", { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 8.19); // beat-grid: row 1
-      tl.fromTo("#trow2", { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 9.29); // beat-grid: row 2
-      tl.fromTo("#trow3", { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 10.37); // beat-grid: row 3
-      tl.fromTo("#trow4", { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 11.46); // beat-grid: row 4
+      tl.fromTo("#trow1", { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 8.74); // beat-locked: 8.74 (strong cue)
+      tl.fromTo("#trow2", { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 9.83); // beat-grid: row 2
+      tl.fromTo("#trow3", { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 10.93); // beat-grid: row 3
+      tl.fromTo("#trow4", { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 12.02); // beat-grid: row 4
       // risk-signal chips stamp in
-      tl.fromTo("#chip1", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(2)" }, 9.83); // beat-grid: chip 1
-      tl.fromTo("#chip2", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(2)" }, 10.93); // beat-grid: chip 2
-      tl.fromTo("#chip3", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(2)" }, 12.02); // beat-grid: chip 3
+      tl.fromTo("#chip1", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(2)" }, 9.29); // beat-grid: chip 1
+      tl.fromTo("#chip2", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(2)" }, 10.37); // beat-grid: chip 2
+      tl.fromTo("#chip3", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(2)" }, 11.46); // beat-grid: chip 3
       // identity confidence drains 52 -> 30 across the scene
       var confState = { v: 52 };
       tl.to(
         confState,
         {
           v: 30,
-          duration: 4.6,
+          duration: 4.3,
           ease: "power1.inOut",
           onUpdate: function () {
             document.getElementById("confNum").textContent = Math.round(confState.v);
           },
         },
-        7.95
+        8.2
       );
-      tl.fromTo("#confBar", { scaleX: 1 }, { scaleX: 30 / 52, duration: 4.6, ease: "power1.inOut" }, 7.95);
+      tl.fromTo("#confBar", { scaleX: 1 }, { scaleX: 30 / 52, duration: 4.3, ease: "power1.inOut" }, 8.2);
       // HIGH risk badge slams in
       tl.fromTo("#s3Badge", { scale: 1.7, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "power4.out" }, 12.55); // beat-grid: badge
       tl.fromTo("#s3Badge", { x: 0 }, { x: -7, duration: 0.05, repeat: 3, yoyo: true, ease: "none" }, 12.86);
@@ -851,13 +843,12 @@
         { keyframes: [{ scale: 0.92, duration: 0.1 }, { scale: 1.04, duration: 0.12 }, { scale: 1, duration: 0.13 }], ease: "power2.out" },
         16.93
       ); // beat-locked: 16.93
-      tl.fromTo("#s4Toast", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 17.15);
 
       // ===== Scene 5 — outro (17.5-21s) =====
       tl.fromTo("#s5Lockup", { scale: 0.86, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: "power3.out" }, 17.95); // beat-locked: 18.56 (lockup settles)
-      tl.fromTo("#s5Headline", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 19.1);
+      tl.fromTo("#s5Headline", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 18.9);
       tl.fromTo("#s5Rule", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, 19.66); // beat-locked: 19.66
-      tl.fromTo("#s5Micro", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 20.2);
+      tl.fromTo("#s5Micro", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 18.3);
 
       // ===== Audio-reactive layer (subtle, deterministic, pre-extracted) =====
       // Bass drives the hook-scene glow presence; treble lifts the confidence card glow.

@@ -18,7 +18,7 @@ const titles: Array<{ match: (pathname: string) => boolean; eyebrow: string; tit
 
 export function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
   const pathname = usePathname();
-  const { profile } = useCallShield();
+  const { profile, account } = useCallShield();
   const page = titles.find((item) => item.match(pathname)) ?? titles[0];
 
   return (
@@ -55,14 +55,26 @@ export function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
             className="flex items-center gap-2 rounded-full p-0.5 pr-2 transition-colors hover:bg-ink/[0.04]"
             aria-label="Open profile settings"
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-[10px] font-bold text-ivory">
-              {initials(profile.name)}
-            </span>
+            {profile.image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={profile.image}
+                alt=""
+                referrerPolicy="no-referrer"
+                className="h-8 w-8 rounded-full border border-line object-cover"
+              />
+            ) : (
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-[10px] font-bold text-ivory">
+                {initials(profile.name)}
+              </span>
+            )}
             <span className="hidden text-left md:block">
               <span className="block text-[11.5px] font-medium leading-none text-ink/80">
                 {profile.name.split(" ")[0]}
               </span>
-              <span className="mt-1 block text-[9px] leading-none text-muted">Demo account</span>
+              <span className="mt-1 block text-[9px] leading-none text-muted">
+                {account ? "Google account" : "Demo account"}
+              </span>
             </span>
           </Link>
         </div>

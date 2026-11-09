@@ -13,7 +13,24 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`. No API keys, accounts, or database are required — the demo runs without voice.
+Open `http://localhost:3000`. No API keys or database config are required — the demo runs without voice and without sign-in.
+
+### Optional: sign in with Google (per-user data)
+
+Call history and the blocklist can live on a real account instead of the browser. Add a MongoDB connection string plus Google OAuth credentials and restart:
+
+```bash
+MONGODB_URI="mongodb+srv://<user>:<password>@cluster0.xxxxx.mongodb.net/callshieldAI?retryWrites=true&w=majority"
+AUTH_SECRET=<long random string>
+GOOGLE_CLIENT_ID=<from https://console.cloud.google.com/apis/credentials>
+GOOGLE_CLIENT_SECRET=<secret>
+```
+
+- Authorized redirect URI: `http://localhost:3000/api/auth/callback/google`.
+- Allow your IP (or `0.0.0.0/0` for development) in the Atlas network access list.
+- Collections `users`, `calls`, and `blocked` are created automatically on first sign-in; users get a unique index on `email`.
+- Signed-in users see their real Google name, email, and photo in Settings, and each account gets its own server-persisted call history and blocklist (`/api/user/*` routes, scoped by user id). Assistant settings and notifications stay on the device.
+- Without `MONGODB_URI` or the Google credentials, the app runs in demo mode exactly as before: everything is stored in `localStorage` for that browser only.
 
 ### Optional: real call voices with Gnani
 
@@ -168,12 +185,13 @@ your reply ──► MediaRecorder ──► 16 kHz WAV ──► POST /api/voic
 
 - `npx tsc --noEmit` — passes.
 - `npm run build` — production build passes.
+- `node scripts/mongo-check.mjs` — pings the configured MongoDB Atlas cluster, creates the `users.email` unique index, and round-trips a test document.
 - `npm run test:demo` — drives the app in Chrome via `playwright-core`: landing → dashboard → bank scam → voice-call stage → progressive risk → block → blocklist → history detail → notifications → takeover/typed fallback → voice settings → allow → history filters → blocklist removal/manual add → empty history restore → PWA/service worker checks. Requires the app running and Chrome installed; set `CHROME_PATH` if Chrome is in a non-default location.
 - `npm run test:voice` — requires `GNANI_API_KEY` and a running app. Synthesises a line through the TTS route, posts the audio back to the STT route, and checks word overlap. This is the only check that spends Gnani credits.
 
 ## Stack
 
-Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS · Framer Motion · Lucide · LocalStorage · Service worker · playwright-core for local verification.
+Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS · Framer Motion · Lucide · NextAuth v5 (Google) · MongoDB (Atlas) · Gnani voice (optional) · Service worker · playwright-core for local verification.
 
 ## Known limitations
 

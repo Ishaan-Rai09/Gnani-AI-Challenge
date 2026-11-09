@@ -57,13 +57,13 @@ export function SiteNav() {
 
         <div className="hidden items-center gap-5 md:flex">
           <Link
-            href="/app"
+            href="/signin"
             className="text-[13.5px] font-medium text-ink/70 transition-colors hover:text-ink"
           >
             Sign in
           </Link>
-          <ButtonLink href="/app" variant="ink" size="sm" className="h-9 px-4">
-            Open Dashboard
+          <ButtonLink href="/signin" variant="ink" size="sm" className="h-9 px-4">
+            Get started
           </ButtonLink>
         </div>
 
@@ -92,15 +92,15 @@ export function SiteNav() {
               </a>
             ))}
             <Link
-              href="/app"
+              href="/signin"
               onClick={() => setOpen(false)}
               className="border-b border-line/70 py-3 text-sm font-medium text-ink/80"
             >
               Sign in
             </Link>
           </nav>
-          <ButtonLink href="/app" variant="primary" className="mt-5 w-full">
-            Open Dashboard
+          <ButtonLink href="/signin" variant="primary" className="mt-5 w-full">
+            Get started
           </ButtonLink>
         </div>
       )}
