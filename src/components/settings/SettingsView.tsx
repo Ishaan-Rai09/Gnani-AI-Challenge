@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
 import {
   Download,
   Info,
@@ -17,6 +16,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { signOutAndClear } from "@/lib/signout";
 import { useCallShield } from "@/lib/store";
 import { initials } from "@/lib/format";
 
@@ -94,13 +94,13 @@ export function SettingsView() {
       calls,
       blocklist,
       notifications,
-      note: "CallShield demo export. All callers are fictional.",
+      note: "CallShield account export. All sample callers are fictional.",
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = "callshield-demo-data.json";
+    anchor.download = "callshield-account-data.json";
     anchor.click();
     URL.revokeObjectURL(url);
     pushToast({ title: "Data exported", description: "A JSON file was downloaded.", tone: "success" });
@@ -189,7 +189,7 @@ export function SettingsView() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => void signOut({ callbackUrl: "/" })}
+                  onClick={() => void signOutAndClear()}
                 >
                   <LogOut className="h-3 w-3" />
                   Sign out

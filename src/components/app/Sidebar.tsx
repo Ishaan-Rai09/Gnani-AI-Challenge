@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronRight, Lock, ShieldCheck } from "lucide-react";
+import { ChevronRight, Lock, LogOut, ShieldCheck } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { NAV_ITEMS, isNavActive } from "@/components/app/navItems";
+import { signOutAndClear } from "@/lib/signout";
 import { useCallShield } from "@/lib/store";
 import { initials } from "@/lib/format";
 import { cx } from "@/lib/utils";
@@ -15,13 +16,10 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <div className="flex h-full flex-col bg-ink text-ivory">
-      <div className="flex h-[72px] shrink-0 items-center justify-between border-b border-white/10 px-5">
+      <div className="flex h-[72px] shrink-0 items-center border-b border-white/10 px-5">
         <Link href="/app" onClick={onNavigate} aria-label="CallShield dashboard">
           <Logo inverted />
         </Link>
-        <span className="border border-white/15 px-1.5 py-0.5 text-[8.5px] font-semibold uppercase tracking-[0.14em] text-ivory/40">
-          Demo
-        </span>
       </div>
 
       <div className="flex-1 overflow-y-auto px-3 py-5">
@@ -110,9 +108,20 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           </span>
           <ChevronRight className="h-3.5 w-3.5 text-ivory/25" />
         </Link>
+        <button
+          type="button"
+          onClick={() => {
+            onNavigate?.();
+            void signOutAndClear();
+          }}
+          className="mt-1 flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-[11.5px] font-medium text-ivory/45 transition-colors hover:bg-white/[0.05] hover:text-ivory"
+        >
+          <LogOut className="h-3.5 w-3.5" />
+          Sign out
+        </button>
         <p className="mt-2 flex items-center justify-center gap-1.5 px-2 text-[9px] text-ivory/20">
           <Lock className="h-2.5 w-2.5" />
-          Simulated environment · data stays on device
+          Simulated environment · account data synced
         </p>
       </div>
     </div>

@@ -54,7 +54,7 @@ export function CallDetailView({ id }: { id: string }) {
         <EmptyState
           icon={<History className="h-5 w-5" />}
           title="Call record not found"
-          description="This call may have been removed when demo data was reset. The record is stored locally, so it is only available in the browser where it was created."
+          description="This call isn't in your account history. It may have been cleared, or it was saved on another device."
           action={<ButtonLink href="/app/history" variant="outline">Back to call history</ButtonLink>}
         />
       </div>

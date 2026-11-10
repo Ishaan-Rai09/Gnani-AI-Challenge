@@ -7,16 +7,20 @@ const env = readFileSync(new URL("../.env.local", import.meta.url), "utf8");
 const secret = env.match(/AUTH_SECRET="(.*?)"/)?.[1];
 if (!secret) throw new Error("AUTH_SECRET not found");
 
-const USER_ID = "6af20fcc2c3bcf330cc5b1bc";
-const EMAIL = "ishaanrai18@gmail.com";
-const BASE = "http://localhost:3000";
+// Personal account ids do not belong in the repo — pass the test user in.
+const USER_ID = process.env.CALLSHIELD_USER_ID;
+const EMAIL = process.env.CALLSHIELD_EMAIL;
+if (!USER_ID || !EMAIL) {
+  throw new Error("Set CALLSHIELD_USER_ID and CALLSHIELD_EMAIL to a real Mongo user before running.");
+}
+const BASE = process.env.CALLSHIELD_URL || "http://localhost:3000";
 const SALT = "authjs.session-token";
 
 const jwt = await encode({
   secret,
   salt: SALT,
   maxAge: 60 * 60,
-  token: { email: EMAIL, uid: USER_ID, sub: USER_ID, name: "Ishaan Rai" },
+  token: { email: EMAIL, uid: USER_ID, sub: USER_ID, name: "Test User" },
 });
 
 const cookie = `${SALT}=${jwt}`;

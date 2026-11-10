@@ -176,7 +176,7 @@ export function AssistantView() {
               )}
             >
               {assistant.screeningEnabled
-                ? "Screening is active. Incoming unknown callers reach the assistant first in this demo."
+                ? "Screening is active. Incoming unknown callers reach the assistant first during live screening."
                 : "Screening is paused. Unknown callers will not be answered by the assistant until you turn this back on."}
             </div>
           </section>
@@ -430,7 +430,7 @@ export function AssistantView() {
               <h3 className="text-[13.5px] font-semibold">Notification preferences</h3>
             </div>
             <p className="mt-0.5 text-[11px] text-muted">
-              In-app alerts. No email or push provider is connected in this demo.
+              In-app alerts. No email or push provider is connected in this prototype.
             </p>
             <div className="mt-3 divide-y divide-line/70">
               {NOTIFICATIONS.map((item) => (
@@ -530,7 +530,7 @@ export function AssistantView() {
             </div>
 
             <p className="mt-3 text-[9px] leading-relaxed text-muted">
-              Scripted demo callers use fixed dialogue. Changing the greeting updates the
+              Scripted callers use fixed dialogue. Changing the greeting updates the
               assistant&apos;s first line, and the voice above reads it aloud.
             </p>
           </div>
@@ -558,7 +558,7 @@ export function AssistantView() {
                     : "border-line text-muted"
                 )}
               >
-                {voice.checking ? "checking" : voice.configured ? "live voice" : "demo"}
+                {voice.checking ? "checking" : voice.configured ? "live voice" : "captions only"}
               </span>
             </div>
             <p className="mt-2 text-[10px] leading-relaxed text-muted">
@@ -603,7 +603,7 @@ export function AssistantView() {
             </select>
             <p className="mt-2 text-[9px] leading-relaxed text-muted">
               Sets the language for voice recognition and the scripted call. Spoken audio uses
-              Gnani&apos;s automatic language detection; demo scripts are in English.
+              Gnani&apos;s automatic language detection; simulated scripts are in English.
             </p>
           </div>
         </aside>

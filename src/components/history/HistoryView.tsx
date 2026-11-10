@@ -170,7 +170,7 @@ export function HistoryView({ initialRisk }: { initialRisk?: string }) {
             icon={<History className="h-5 w-5" />}
             title="No calls on record"
             description="Screened calls, transcripts, and decisions will appear here. Load sample data to explore the experience."
-            action={<Button onClick={seedHistory}>Try Demo Data</Button>}
+            action={<Button onClick={seedHistory}>Load sample calls</Button>}
             className="m-4 border-0 bg-transparent"
           />
         ) : filtered.length === 0 ? (

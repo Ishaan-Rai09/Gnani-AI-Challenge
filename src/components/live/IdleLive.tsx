@@ -16,7 +16,7 @@ export function IdleLive({ onOpenPicker }: { onOpenPicker: () => void }) {
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
           <p className="text-[9.5px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Live screening · demo
+            Live screening · simulated
           </p>
           <h2 className="mt-2 text-[28px] font-semibold leading-none tracking-[-0.04em] sm:text-[32px]">
             Your assistant is ready to pick up.
@@ -128,7 +128,7 @@ export function IdleLive({ onOpenPicker }: { onOpenPicker: () => void }) {
             </p>
           </div>
           <span className="hidden text-[9px] uppercase tracking-[0.12em] text-muted sm:block">
-            Demo data
+            Simulated callers
           </span>
         </div>
 

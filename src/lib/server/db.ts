@@ -50,11 +50,17 @@ async function getDb(): Promise<Db> {
 
   if (!globalForMongo.mongoClient) {
     globalForMongo.mongoClient = client;
-    // The email lookup backs the Google sign-in upsert.
-    await client
-      .db()
-      .collection<UserDoc>("users")
-      .createIndex({ email: 1 }, { unique: true });
+    const db = client.db();
+    // The email lookup backs the Google sign-in upsert; the userId indexes
+    // keep every per-user query bounded.
+    await Promise.all([
+      db.collection<UserDoc>("users").createIndex({ email: 1 }, { unique: true }),
+      db
+        .collection<UserDoc>("users")
+        .createIndex({ googleSub: 1 }, { unique: true, sparse: true }),
+      db.collection<CallDoc>("calls").createIndex({ userId: 1, createdAt: -1 }),
+      db.collection<BlockedDoc>("blocked").createIndex({ userId: 1, createdAt: -1 }),
+    ]);
   }
 
   return client.db();

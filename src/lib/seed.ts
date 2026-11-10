@@ -3,7 +3,6 @@ import type {
   BlockedNumber,
   CallRecord,
   NotificationItem,
-  Profile,
   TranscriptEntry,
 } from "@/lib/types";
 import { toIndicators } from "@/lib/risk";
@@ -484,11 +483,4 @@ export const DEFAULT_ASSISTANT: AssistantSettings = {
   notifySuspicious: true,
   notifySummaries: true,
   notifyBlocked: true,
-};
-
-export const DEFAULT_PROFILE: Profile = {
-  name: "Aarav Sharma",
-  email: "aarav@example.com",
-  phone: "+91 98•••• 2140",
-  plan: "CallShield Demo",
 };

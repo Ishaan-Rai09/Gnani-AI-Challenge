@@ -31,9 +31,15 @@ import type {
 } from "@/lib/types";
 import { uid } from "@/lib/utils";
 
-/** Device-local prefs (assistant settings, notifications, phone label) — they
- * survive sign-out but never hold call data, which lives in MongoDB per user. */
+/** Device-local prefs (assistant settings, notifications, phone label) are
+ * namespaced per account so one user's callers never appear for another. */
 const ACCOUNT_PREFS_KEY = "callshield.v1.account";
+/** Pre-authentication demo blob from older builds — removed on sign-in. */
+const LEGACY_STORAGE_KEY = "callshield.v1";
+
+function prefsKey(userId: string) {
+  return `${ACCOUNT_PREFS_KEY}.${userId}`;
+}
 
 export type ToastTone = "success" | "risk" | "neutral";
 
@@ -160,7 +166,8 @@ export function CallShieldProvider({ children }: { children: ReactNode }) {
       }
       if (cancelled) return;
       try {
-        const raw = window.localStorage.getItem(ACCOUNT_PREFS_KEY);
+        window.localStorage.removeItem(LEGACY_STORAGE_KEY);
+        const raw = window.localStorage.getItem(prefsKey(account.id));
         if (raw) {
           const prefs = JSON.parse(raw) as Partial<PersistedData>;
           if (prefs.assistant) setAssistant({ ...DEFAULT_ASSISTANT, ...prefs.assistant });
@@ -177,18 +184,29 @@ export function CallShieldProvider({ children }: { children: ReactNode }) {
     };
   }, [sessionStatus, account]);
 
+  // Drop any in-memory user data the moment the session ends so a signed-out
+  // screen can never flash the previous account's calls or notifications.
+  useEffect(() => {
+    if (sessionStatus !== "unauthenticated") return;
+    setCalls([]);
+    setBlocklist([]);
+    setNotifications([]);
+    setSession(null);
+    setHydrated(false);
+  }, [sessionStatus]);
+
   // Persist only device-local assistant settings, notifications, and phone.
   useEffect(() => {
-    if (!hydrated) return;
+    if (!hydrated || !account) return;
     try {
       window.localStorage.setItem(
-        ACCOUNT_PREFS_KEY,
+        prefsKey(account.id),
         JSON.stringify({ assistant, notifications, phone })
       );
     } catch {
       // Storage may be unavailable (private mode). The session still works in memory.
     }
-  }, [hydrated, assistant, notifications, phone]);
+  }, [hydrated, account, assistant, notifications, phone]);
 
   /** Best-effort server sync for signed-in users; local state already updated. */
   const syncServer = useCallback(

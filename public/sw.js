@@ -1,4 +1,4 @@
-const CACHE_NAME = "callshield-v1";
+const CACHE_NAME = "callshield-v2";
 const PRECACHE = [
   "/offline.html",
   "/manifest.webmanifest",
@@ -6,6 +6,10 @@ const PRECACHE = [
   "/icons/icon-512.png",
   "/icons/apple-touch-icon.png",
 ];
+
+// Pages safe to keep on disk. App pages are deliberately excluded: they are
+// personalised and must never be replayed after a different account signs in.
+const PUBLIC_NAVIGATIONS = new Set(["/", "/signin", "/legal", "/offline.html"]);
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -27,6 +31,17 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+// Sign-out asks the app to drop every cached response on this device.
+self.addEventListener("message", (event) => {
+  if (event.data?.type !== "CLEAR_CACHES") return;
+  event.waitUntil(
+    caches
+      .keys()
+      .then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
+      .catch(() => {})
+  );
+});
+
 self.addEventListener("fetch", (event) => {
   const request = event.request;
   if (request.method !== "GET") return;
@@ -34,22 +49,31 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
+  // Never cache API or auth traffic — it is per-user and can contain PII.
+  if (url.pathname.startsWith("/api/")) return;
+
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy)).catch(() => {});
+          if (response.ok && PUBLIC_NAVIGATIONS.has(url.pathname)) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, copy)).catch(() => {});
+          }
           return response;
         })
         .catch(async () => {
-          const cached = await caches.match(request);
-          return cached || caches.match("/offline.html");
+          if (PUBLIC_NAVIGATIONS.has(url.pathname)) {
+            const cached = await caches.match(request);
+            if (cached) return cached;
+          }
+          return (await caches.match("/offline.html")) ?? Response.error();
         })
     );
     return;
   }
 
+  // Static build output and icons are the only cacheable subresources.
   if (
     url.pathname.startsWith("/_next/static/") ||
     url.pathname.startsWith("/icons/") ||
@@ -69,18 +93,6 @@ self.addEventListener("fetch", (event) => {
         });
       })
     );
-    return;
   }
-
-  event.respondWith(
-    fetch(request)
-      .then((response) => {
-        if (response.ok) {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy)).catch(() => {});
-        }
-        return response;
-      })
-      .catch(() => caches.match(request))
-  );
+  // Everything else goes straight to the network (no cache), by design.
 });

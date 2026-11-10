@@ -56,20 +56,20 @@ Run `npm run test:voice` while the app is running to synthesise a line and feed 
 
 ### Optional: sign in with Google (per-user data)
 
-Call history and the blocklist can live on a real account instead of the browser. Add a MongoDB connection string plus Google OAuth credentials and restart:
+CallShield is Google-sign-in-only: call history and the blocklist are stored per account in MongoDB. Add a MongoDB connection string plus Google OAuth credentials and restart:
 
 ```bash
 MONGODB_URI="mongodb+srv://<user>:<password>@cluster0.xxxxx.mongodb.net/callshieldAI?retryWrites=true&w=majority"
-AUTH_SECRET=<long random string>
+AUTH_SECRET=<generate with `npx auth secret`>
 GOOGLE_CLIENT_ID=<from https://console.cloud.google.com/apis/credentials>
 GOOGLE_CLIENT_SECRET=<secret>
 ```
 
-- Authorized redirect URI: `http://localhost:3000/api/auth/callback/google`.
+- Authorized redirect URI: `http://localhost:3000/api/auth/callback/google` (and your production callback).
 - Allow your IP (or `0.0.0.0/0` for development) in the Atlas network access list.
-- Collections `users`, `calls`, and `blocked` are created automatically on first sign-in; users get a unique index on `email`.
+- Collections `users`, `calls`, and `blocked` are created automatically on first sign-in, with unique indexes on `users.email` and `users.googleSub`, plus per-user indexes on call/blocklist rows.
 - Signed-in users see their real Google name, email, and photo in Settings, and each account gets its own server-persisted call history and blocklist (`/api/user/*` routes, scoped by user id). Assistant settings and the phone label stay on the device.
-- Without `MONGODB_URI` or the Google credentials, the app runs in demo mode exactly as before: everything is stored in `localStorage` for that browser only.
+- Without `MONGODB_URI` or the Google credentials the app cannot sign in; there is no guest or demo mode.
 
 Production build:
 
@@ -80,7 +80,7 @@ npm start
 
 ## Demo flow
 
-1. Open the landing page and select **Sign in** → **Continue with Google** (or continue in demo mode).
+1. Open the landing page and select **Sign in** → **Continue with Google**.
 2. On the dashboard, select **Simulate Incoming Call**.
 3. Choose **Bank impersonation scam** (selected by default) and start the call.
 4. Select **Let AI Answer** and listen to the Gnani-voiced screening.
@@ -88,7 +88,7 @@ npm start
 6. **Take Over** — speak hands-free; the caller argues back through Gnani Timbre.
 7. Allow, end, or block the caller, and open the blocklist and call history to verify the decision was saved to your account.
 
-Guests persist everything in `localStorage`; signed-in users persist calls and blocked numbers in MongoDB, and assistant preferences on the device.
+Calls and blocked numbers persist in MongoDB per account; assistant preferences stay on the device.
 
 ## What is included
 
@@ -213,15 +213,30 @@ your reply ──► MediaRecorder ──► 16 kHz WAV ──► POST /api/voic
 ### Data & auth
 
 - **Auth:** NextAuth v5 with Google — JWT sessions, credentials passed explicitly to the provider, per-user rows namespaced `${userId}:${recordId}` so every query is naturally scoped to one account.
-- **Storage:** MongoDB Atlas (`users`, `calls`, `blocked`). The `users.email` unique index backs the sign-in upsert; collections are created on first use.
-- **Graceful degradation everywhere:** no Gnani key → captions-only; no MongoDB/Google → local-storage demo. The prototype never hard-fails because a credential is missing.
+- **Storage:** MongoDB Atlas (`users`, `calls`, `blocked`). Unique indexes on `users.email` and `users.googleSub` back the sign-in upsert; per-user indexes keep every query bounded.
+- **Graceful degradation:** no Gnani key → captions-only; missing MongoDB/Google credentials → sign-in is unavailable rather than an insecure guest mode.
+
+## Security
+
+- Every `/api/user/*`, `/api/voice/*`, and `/api/integrations/*` route requires a valid NextAuth session — the Gnani TTS/STT proxies are not open, billable relays.
+- State-changing requests must be same-origin; writes are rate-limited per user (TTS 120/min, STT 40/min, writes 10–60/min per instance).
+- Client payloads are size-capped, schema-validated, and sanitized before MongoDB, then re-validated on read. Unknown fields and malformed transcript entries never persist.
+- `AUTH_SECRET` is mandatory in production: the app refuses to start with a fallback secret, because a published signing key would let anyone forge sessions.
+- Responses carry CSP, `X-Frame-Options: DENY`, `nosniff`, a strict referrer policy, a microphone-scoped Permissions-Policy, and HSTS; `X-Powered-By` is disabled.
+- The service worker never caches `/api/*` or app pages, sign-out purges Cache Storage, and device-local preferences are namespaced by user id.
+- `npm audit` reports 0 vulnerabilities (PostCSS is pinned past the vulnerable 8.4/8.5.22 range).
+- Deployment: set `AUTH_SECRET` in Vercel → Settings → Environment Variables, keep Atlas network access as narrow as possible, and register both the localhost and production OAuth callback URLs. Treat `assets/generated-audio.wav` (the voice-clone reference) as sensitive if the repository is public.
+- Residual limits: rate limits are per serverless instance, CSP still needs `'unsafe-inline'` for Next.js inline scripts, and the `/app` redirect is client-side (API routes remain the enforcement point).
 
 ## Verification
 
 - `npx tsc --noEmit` — passes.
 - `npm run build` — production build passes.
-- `node scripts/mongo-check.mjs` — pings the configured MongoDB Atlas cluster, creates the `users.email` unique index, and round-trips a test document.
-- `node scripts/verify-user-routes.mjs` — signs a real session and drives every per-user API route (reset, seed, clear, blocklist add/remove, save call) against the live database.
+- `node scripts/mongo-check.mjs` — pings the configured MongoDB Atlas cluster, creates the indexes, and round-trips a test document.
+- `node scripts/verify-user-routes.mjs` — signs a real session and drives every per-user API route (reset, seed, clear, blocklist add/remove, save call) against the live database. Set `CALLSHIELD_USER_ID` and `CALLSHIELD_EMAIL` to a test user.
+- `node scripts/security-check.mjs` — proves unauthenticated access is closed, CSRF origins are rejected, payloads are validated, responses are `no-store`, and security headers are present.
+- `node scripts/signout-check.mjs` — drives Chrome: dashboard → sign out → session cookie cleared → no private URLs left in Cache Storage → no CSP violations.
+- `node scripts/auth-only-check.mjs` — verifies the signed-out redirect, Google-only sign-in page, account mode, and removal of the legacy guest blob. Set `CALLSHIELD_USER_ID` and `CALLSHIELD_EMAIL`.
 - `npm run test:demo` — drives the app in Chrome via `playwright-core`: landing → dashboard → bank scam → voice-call stage → progressive risk → block → blocklist → history detail → notifications → takeover/typed fallback → voice settings → allow → history filters → blocklist removal/manual add → empty history restore → PWA/service worker checks. Requires the app running and Chrome installed; set `CHROME_PATH` if Chrome is in a non-default location.
 - `npm run test:voice` — requires `GNANI_API_KEY` and a running app. Synthesises a line through the TTS route, posts the audio back to the STT route, and checks word overlap. This is the only check that spends Gnani credits.
 
@@ -232,7 +247,7 @@ Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS · Framer Moti
 ## Known limitations
 
 - Calls are scripted simulations, not a live telephony integration.
-- Signed-in data is stored in MongoDB in plaintext JSON blobs (no field-level encryption); guest data lives in browser storage.
+- Signed-in data is stored in MongoDB in plaintext JSON blobs (no field-level encryption).
 - Notifications are in-app only; no push, email, or SMS provider is connected.
 - The demo scripts are in English even though the assistant language preference is stored.
 - Hands-free mic relies on browser echo cancellation; loud speakers may leak caller audio into a clip.

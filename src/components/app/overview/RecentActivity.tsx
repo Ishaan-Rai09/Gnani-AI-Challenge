@@ -41,7 +41,7 @@ export function RecentActivity() {
             Load sample calls to explore transcripts, summaries, and decisions.
           </p>
           <Button variant="outline" size="sm" className="mt-4" onClick={seedHistory}>
-            Try Demo Data
+            Try Sample Calls
           </Button>
         </div>
       ) : (

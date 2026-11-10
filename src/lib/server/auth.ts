@@ -3,14 +3,19 @@ import Google from "next-auth/providers/google";
 import { mongoConfigured, collections } from "@/lib/server/db";
 
 /**
- * Google sign-in, following the same optional-credentials pattern as the
- * Gnani voice integration: without GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET
- * (or a MONGODB_URI) the provider list is empty and the app keeps working in
- * demo mode.
- *
- * Signed-in users get server-persisted, per-user call history and blocklist;
- * guests keep the original local-storage demo.
+ * Google sign-in. Signed-in users get server-persisted, per-user call history
+ * and blocklist; without credentials the provider list is empty.
  */
+
+const AUTH_SECRET = process.env.AUTH_SECRET?.trim();
+
+// Never fall back to a published secret in production: a known signing key
+// lets anyone mint a valid session cookie and impersonate any account.
+if (!AUTH_SECRET && process.env.NODE_ENV === "production") {
+  throw new Error(
+    "AUTH_SECRET is required in production. Generate one with `npx auth secret` and set it in the deployment environment."
+  );
+}
 
 export const googleConfigured = Boolean(
   process.env.GOOGLE_CLIENT_ID?.trim() &&
@@ -48,8 +53,13 @@ async function upsertGoogleUser(input: {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  trustHost: true,
-  secret: process.env.AUTH_SECRET?.trim() || "callshield-dev-secret-change-me",
+  // Only trust forwarded Host headers where the platform guarantees them. On
+  // Vercel they are fixed; elsewhere require AUTH_TRUST_HOST=true explicitly.
+  trustHost:
+    process.env.NODE_ENV !== "production" ||
+    Boolean(process.env.VERCEL) ||
+    process.env.AUTH_TRUST_HOST === "true",
+  secret: AUTH_SECRET || "callshield-local-dev-only-secret",
   // Credentials are passed explicitly: the bare `Google` provider only
   // auto-reads AUTH_GOOGLE_ID / AUTH_GOOGLE_SECRET, not GOOGLE_CLIENT_ID.
   providers: googleConfigured
@@ -62,8 +72,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     : [],
   session: { strategy: "jwt" },
   callbacks: {
-    async signIn({ user, account }) {
-      if (account?.provider !== "google" || !user.email) return true;
+    async signIn({ user, account, profile }) {
+      if (account?.provider !== "google") return true;
+      // Never create or link an account from an unverified or missing email.
+      if (!user.email) return false;
+      if ((profile as { email_verified?: boolean } | undefined)?.email_verified === false) {
+        return false;
+      }
       const userId = await upsertGoogleUser({
         googleSub: account.providerAccountId,
         email: user.email,

@@ -5,7 +5,7 @@ import { Logo } from "@/components/brand/Logo";
 
 export const metadata: Metadata = {
   title: "Privacy, security & terms",
-  description: "How the CallShield demo handles data, plus plain-language product terms and contact details.",
+  description: "How the CallShield prototype handles data, plus plain-language product terms and contact details.",
 };
 
 const sections = [
@@ -13,9 +13,9 @@ const sections = [
     id: "privacy",
     title: "Privacy",
     body: [
-      "This is a prototype. Call logs, transcripts, blocklist entries, settings, and notifications are stored in your browser's local storage on this device. They are not sent to a CallShield server.",
-      "Simulated callers, phone numbers, and organisations are fictional. Do not enter real sensitive information into the demo. Clearing your browser storage removes everything CallShield saved.",
-      "When a Gnani key is configured, caller and assistant lines are synthesised by Gnani, and any reply you record is sent to Gnani for transcription. CallShield does not store those audio clips; the resulting text stays in your browser. Without a key, no audio is captured or sent.",
+      "This is a prototype. When you sign in with Google, your call logs, transcripts, and blocklist entries are stored in CallShield's MongoDB database and tied to your account. Assistant settings, notifications, and the phone label stay in this browser's local storage.",
+      "We store your Google name, email, and profile photo so you can recognise your account. Simulated callers, phone numbers, and organisations are fictional. Do not enter real sensitive information into the prototype. Clearing browser storage removes device-local settings; account history can be cleared from Settings while signed in.",
+      "When a Gnani key is configured, caller and assistant lines are synthesised by Gnani, and any reply you record is sent to Gnani for transcription. CallShield does not store those audio clips; the resulting text is saved to your account. Without a key, no audio is captured or sent.",
     ],
   },
   {
@@ -23,7 +23,7 @@ const sections = [
     title: "Security",
     body: [
       "CallShield does not access your phone, contacts, or cellular network, and there is no real call interception. The microphone is requested only when you tap Speak during a simulated call, so your reply can be transcribed. API credentials live in server-side environment variables and are never included in client code.",
-      "The app ships as a Progressive Web App with a scoped service worker that caches static assets and an offline fallback. No API credentials are included in client-side code.",
+      "Sign-in uses Google OAuth. Sessions are signed with a server-only secret in HTTP-only cookies, and every account API route checks the session before reading or changing data. The service worker caches only static assets and public pages, never per-user API responses, and signing out clears the session and cached data.",
       "Risk levels are heuristic signals based on the conversation, not verified findings. A 'High Risk' label does not prove fraud, and a 'Low Risk' label does not guarantee legitimacy.",
     ],
   },
@@ -69,8 +69,8 @@ export default function LegalPage() {
           Plain language, no fine print.
         </h1>
         <p className="mt-4 max-w-[560px] text-[14px] leading-relaxed text-muted">
-          CallShield is a simulated product prototype. These notes explain what the demo does with
-          data, what it does not do, and where the limits are.
+          CallShield is a simulated product prototype. These notes explain what the prototype does
+          with data, what it does not do, and where the limits are.
         </p>
 
         <div className="mt-10 flex flex-wrap gap-2 border-y border-line py-3">
@@ -107,9 +107,8 @@ export default function LegalPage() {
 
         <div className="mt-16 border border-line bg-paper p-5">
           <p className="text-[11px] leading-relaxed text-muted">
-            Last updated for the CallShield demo build. If this prototype is developed into a real
-            product, these notes must be replaced with reviewed legal, privacy, and security
-            documentation.
+            Last updated for the CallShield prototype build. If this product is developed further,
+            these notes must be replaced with reviewed legal, privacy, and security documentation.
           </p>
         </div>
       </main>

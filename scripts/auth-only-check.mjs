@@ -1,12 +1,15 @@
 // Verifies demo mode is fully removed:
 //   1. signed-out visitors to /app are redirected to /signin
 //   2. /signin offers only Google (no demo-mode button)
-//   3. with a forged (validly-encoded) Google session, /app loads in account
-//      mode with the Google profile and no demo text anywhere
-//   4. settings persist per-account; localStorage holds no calls/blocklist blob
+//   3. with a validly-encoded Google session, /app loads in account mode with
+//      no demo text anywhere
+//   4. localStorage holds no legacy guest calls/blocklist blob
+//
+// Set CALLSHIELD_USER_ID and CALLSHIELD_EMAIL (the Mongo user to impersonate)
+// plus AUTH_SECRET in .env.local. Optional: CALLSHIELD_URL, CHROME_PATH.
 import assert from "node:assert/strict";
 import { chromium } from "playwright-core";
-import { SignJWT, jwtEncrypt } from "jose";
+import { encode } from "next-auth/jwt";
 import { readFileSync } from "node:fs";
 
 const BASE = process.env.CALLSHIELD_URL || "http://localhost:3000";
@@ -25,7 +28,22 @@ function loadEnv() {
   }
 }
 loadEnv();
-const secret = new TextEncoder().encode(process.env.AUTH_SECRET);
+
+const USER_ID = process.env.CALLSHIELD_USER_ID;
+const EMAIL = process.env.CALLSHIELD_EMAIL;
+const secret = process.env.AUTH_SECRET;
+if (!USER_ID || !EMAIL) {
+  throw new Error("Set CALLSHIELD_USER_ID and CALLSHIELD_EMAIL to a real Mongo user for this check.");
+}
+if (!secret) throw new Error("AUTH_SECRET not found in .env.local");
+
+const SALT = "authjs.session-token";
+const sessionToken = await encode({
+  secret,
+  salt: SALT,
+  maxAge: 60 * 60,
+  token: { email: EMAIL, uid: USER_ID, sub: USER_ID, name: "Test User" },
+});
 
 const step = (name) => console.log(`OK  ${name}`);
 const browser = await chromium.launch({ executablePath, headless: true });
@@ -47,21 +65,8 @@ try {
   await guest.close();
 
   /* ----------------------- signed-in via forged session -------------------- */
-  const salt = "authjs.session-token";
-  const sessionToken = await new SignJWT({
-    user: { id: "verify-user", email: "ishaanrai18@gmail.com" },
-    email: "ishaanrai18@gmail.com",
-  })
-    .setProtectedHeader({ alg: "dir", enc: "A256GCM" })
-    .setIssuedAt()
-    .setExpirationTime("1h")
-    .encrypt(secret);
-  void salt;
-
   const authed = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
-  await authed.addCookies([
-    { name: "authjs.session-token", value: sessionToken, domain: "localhost", path: "/" },
-  ]);
+  await authed.addCookies([{ name: SALT, value: sessionToken, domain: "localhost", path: "/" }]);
   const page = await authed.newPage();
 
   await page.goto(`${BASE}/app/settings`, { waitUntil: "networkidle", timeout: 60_000 });
@@ -69,7 +74,6 @@ try {
   assert.ok(!/demo/i.test(settings), `demo text still in settings: ${settings.slice(0, 400)}`);
   step("Settings page contains no demo-mode text");
 
-  // Server data loads for the forged user (state route 200 → history hydrates).
   await page.goto(`${BASE}/app`, { waitUntil: "networkidle", timeout: 60_000 });
   const dash = await page.locator("body").innerText();
   assert.ok(/calls screened/i.test(dash), "dashboard did not render");

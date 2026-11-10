@@ -3,7 +3,7 @@ import { SettingsView } from "@/components/settings/SettingsView";
 
 export const metadata: Metadata = {
   title: "Settings",
-  description: "Manage your CallShield prototype profile, demo data, and installed app.",
+  description: "Manage your CallShield account, saved data, and installed app.",
 };
 
 export default function SettingsPage() {

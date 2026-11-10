@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Smartphone } from "lucide-react";
+import { LogOut, Menu, Smartphone } from "lucide-react";
 import { NotificationMenu } from "@/components/app/NotificationMenu";
+import { signOutAndClear } from "@/lib/signout";
 import { useCallShield } from "@/lib/store";
 import { initials } from "@/lib/format";
 
@@ -18,7 +19,7 @@ const titles: Array<{ match: (pathname: string) => boolean; eyebrow: string; tit
 
 export function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
   const pathname = usePathname();
-  const { profile, account } = useCallShield();
+  const { profile } = useCallShield();
   const page = titles.find((item) => item.match(pathname)) ?? titles[0];
 
   return (
@@ -73,10 +74,19 @@ export function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
                 {profile.name.split(" ")[0]}
               </span>
               <span className="mt-1 block text-[9px] leading-none text-muted">
-                {account ? "Google account" : "Demo account"}
+                Google account
               </span>
             </span>
           </Link>
+          <button
+            type="button"
+            onClick={() => void signOutAndClear()}
+            aria-label="Sign out"
+            title="Sign out"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-ink/45 transition-colors hover:bg-ink/[0.05] hover:text-ink"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
         </div>
       </div>
     </header>
